@@ -1,0 +1,7 @@
+{
+  "commandDescription": "easily switch default username and default devhub",
+  "errorNoOrgResults": "No results found for the org.",
+  "examples": [
+    "sfdx gmotte:org:switch"
+  ]
+}
