@@ -1,9 +1,11 @@
 {
-  "name": "gmotte",
+  "name": "@gaelmotte/sfdx-gmotte-plugin",
   "description": "Personal sfdx plugin to ease my everyday life",
   "version": "0.0.1",
   "author": "Gael Motte",
-  "bugs": "https://github.com/gaelmotte/sfdx-gmotte-plugin/issues",
+  "bugs": {
+    "url": "https://github.com/gaelmotte/sfdx-gmotte-plugin/issues"
+  },
   "dependencies": {
     "@oclif/core": "^1",
     "@salesforce/command": "^5",
@@ -41,8 +43,7 @@
   "files": [
     "/lib",
     "/messages",
-    "/npm-shrinkwrap.json",
-    "/oclif.manifest.json"
+    "/npm-shrinkwrap.json"
   ],
   "homepage": "https://github.com/gaelmotte/sfdx-gmotte-plugin",
   "keywords": [
@@ -53,12 +54,15 @@
     "commands": "./lib/commands",
     "bin": "sfdx",
     "topics": {
-      "hello": {
-        "description": "Commands to say hello."
+      "org": {
+        "description": "Commands to manage your orgs"
       }
     }
   },
-  "repository": "gaelmotte/sfdx-gmotte-plugin",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gaelmotte/sfdx-gmotte-plugin.git"
+  },
   "scripts": {
     "build": "tsc -p .",
     "lint": "eslint src/**/*.ts test/**/*.ts",
