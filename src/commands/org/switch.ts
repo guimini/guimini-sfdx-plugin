@@ -1,7 +1,7 @@
 import * as os from 'os';
 import * as inquirer from 'inquirer';
 import { SfdxCommand, flags } from '@salesforce/command';
-import { Messages, AuthInfo, Config, OrgConfigProperties} from '@salesforce/core';
+import { Messages, AuthInfo, Config, OrgConfigProperties, OrgAuthorization} from '@salesforce/core';
 import { AnyJson } from '@salesforce/ts-types';
 
 
@@ -10,7 +10,7 @@ Messages.importMessagesDirectory(__dirname);
 
 // Load the specific messages for this file. Messages from @salesforce/command, @salesforce/core,
 // or any library that is using the messages framework can also be loaded this way.
-const messages = Messages.loadMessages('gmotte', 'switch');
+const messages = Messages.loadMessages('@gaelmotte/sfdx-gmotte-plugin', 'switch');
 
 export default class Switch extends SfdxCommand {
   public static description = messages.getMessage('commandDescription');
@@ -31,10 +31,18 @@ export default class Switch extends SfdxCommand {
     const devHubAuthInfos = await AuthInfo.getDevHubAuthInfos();
     const orgInfos = await AuthInfo.listAllAuthorizations();
 
-    const defaultDevhubUsername = this.configAggregator.getConfigInfo().find(c=>c.key === 'defaultdevhubusername')?.value;
-    const defaultUsername = this.configAggregator.getConfigInfo().find(c=>c.key === 'defaultdevhubusername')?.value;
+
+    const defaultDevhubUsername = this.configAggregator.getConfigInfo().find(c=>{
+
+      return c.key === 'defaultdevhubusername'
+    })?.value;
+    const defaultUsername =  this.configAggregator.getConfigInfo().find(c=>c.key === 'defaultusername')?.value as string;
+
+
 
     const questions: inquirer.DistinctQuestion[] = [];
+
+    const getAliasOrUsername = (org  :OrgAuthorization ) => org.aliases[0] ?? org.username
     if(devHubAuthInfos.length > 0){
       questions.push({
         type:'list',
@@ -43,20 +51,21 @@ export default class Switch extends SfdxCommand {
         default:devHubAuthInfos.find(devhub=>devhub.username === defaultDevhubUsername),
         choices:devHubAuthInfos.map(devhub=>({
           name: devhub.aliases.join(", ")+"("+devhub.username+")",
-          value: devhub.aliases[0] ?? devhub.username
+          value: getAliasOrUsername(devhub)
         })),
         loop:true
       })
     }
     if(orgInfos.length > 0){
+      console.log("default username",defaultUsername, orgInfos, orgInfos.find(org=>org.username === defaultUsername))
       questions.push({
         type:'list',
         name: OrgConfigProperties.TARGET_ORG,
         message:'Quelle Org ?',
-        default:orgInfos.find(org=>org.username === defaultUsername),
+        default:getAliasOrUsername(orgInfos.find(org=>org.username === defaultUsername || org.aliases.includes(defaultUsername))),
         choices:orgInfos.map(org=>({
           name: org.aliases.join(", ")+"("+org.username+")",
-          value: org.aliases[0] ?? org.username
+          value: getAliasOrUsername(org)
         })),
         loop:true
       })
