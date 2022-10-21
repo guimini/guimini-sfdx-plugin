@@ -31,14 +31,15 @@ export default class Switch extends SfdxCommand {
     const devHubAuthInfos = await AuthInfo.getDevHubAuthInfos();
     const orgInfos = await AuthInfo.listAllAuthorizations();
 
+    console.log("input", devHubAuthInfos, orgInfos);
 
-    const defaultDevhubUsername = this.configAggregator.getConfigInfo().find(c=>{
 
-      return c.key === 'defaultdevhubusername'
-    })?.value;
+    const defaultDevhubUsername = this.configAggregator.getConfigInfo().find(c=>c.key === 'defaultdevhubusername')?.value;
+    
+    console.log("a");
     const defaultUsername =  this.configAggregator.getConfigInfo().find(c=>c.key === 'defaultusername')?.value as string;
 
-
+    console.log("b");
 
     const questions: inquirer.DistinctQuestion[] = [];
 
