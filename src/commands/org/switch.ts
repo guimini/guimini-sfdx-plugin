@@ -66,16 +66,14 @@ export default class Switch extends SfdxCommand {
 
     await config.read();
 
-    inquirer.prompt(questions).then(answers=>{
-      this.ux.log(answers);
-      if(answers[OrgConfigProperties.TARGET_DEV_HUB ]) config.set(OrgConfigProperties.TARGET_DEV_HUB , answers[OrgConfigProperties.TARGET_DEV_HUB]);
-      if(answers[OrgConfigProperties.TARGET_ORG]) config.set(OrgConfigProperties.TARGET_ORG, answers[OrgConfigProperties.TARGET_ORG]);
-    } );
+    const answers = await inquirer.prompt(questions)
+
+    if(answers[OrgConfigProperties.TARGET_DEV_HUB ]) config.set(OrgConfigProperties.TARGET_DEV_HUB , answers[OrgConfigProperties.TARGET_DEV_HUB]);
+    if(answers[OrgConfigProperties.TARGET_ORG]) config.set(OrgConfigProperties.TARGET_ORG, answers[OrgConfigProperties.TARGET_ORG]);
 
     await config.write();
 
-    // Return an object to be displayed with --json
-    return { defaultDevhubUsername, defaultUsername };
+    return config.getContents();
   }
 
 
