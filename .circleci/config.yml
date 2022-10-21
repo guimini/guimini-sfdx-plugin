@@ -38,6 +38,7 @@ jobs:
             - /usr/local/share/.config/yarn
   CD:
     <<: *test
+    working_directory: ~/cli
     steps:
       - attach_workspace:
           at: ~/cli
