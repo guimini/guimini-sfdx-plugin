@@ -24,6 +24,7 @@ jobs:
           root: ~/cli
           paths:
             - lib
+            - node_modules
   cache:
     <<: *test
     steps:
