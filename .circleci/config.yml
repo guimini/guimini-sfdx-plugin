@@ -51,6 +51,8 @@ workflows:
     jobs:
       - CI
       - CD:
+          requires:
+            - CI
           filters:
             branches:
               only: main
