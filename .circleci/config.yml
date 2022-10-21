@@ -41,6 +41,7 @@ jobs:
     <<: *test
     working_directory: ~/cli
     steps:
+      - checkout
       - attach_workspace:
           at: ~/cli
       - run:
