@@ -1,7 +1,7 @@
 ---
 version: 2
 jobs:
-  node-latest: &test
+  CI: &test
     docker:
       - image: node:latest
     working_directory: ~/cli
@@ -33,12 +33,27 @@ jobs:
             - ~/cli/node_modules
             - /usr/local/share/.cache/yarn
             - /usr/local/share/.config/yarn
+  CD:
+    <<: *test
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - run:
+          name: Authenticate with registry
+          command: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > ~/repo/.npmrc
+      - run:
+          name: Publish package
+          command: npm publish
 
 workflows:
   version: 2
   "gmotte":
     jobs:
-      - node-latest
+      - CI
+      - CD:
+          filters:
+            branches:
+              only: main
       - cache:
           filters:
             tags:
