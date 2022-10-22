@@ -11,30 +11,26 @@ Personal sfdx plugin to ease my everyday life
 [![License](https://img.shields.io/npm/l/gmotte.svg)](https://github.com/gaelmotte/gmotte-sfdx-plugin/blob/master/package.json)
 
 <!-- toc -->
-
-- [gmotte](#gmotte)
-- [Debugging your plugin](#debugging-your-plugin)
-- [GitFlow](#gitflow)
-  <!-- tocstop -->
+* [gmotte](#gmotte)
+* [Debugging your plugin](#debugging-your-plugin)
+* [GitFlow](#gitflow)
+<!-- tocstop -->
     <!-- install -->
     <!-- usage -->
-
 ```sh-session
 $ npm install -g @gaelmotte/gmotte-sfdx-plugin
 $ sfdx COMMAND
 running command...
 $ sfdx (--version)
-@gaelmotte/gmotte-sfdx-plugin/0.3.4 linux-x64 node-v19.0.0
+@gaelmotte/gmotte-sfdx-plugin/0.3.5 linux-x64 node-v19.0.0
 $ sfdx --help [COMMAND]
 USAGE
   $ sfdx COMMAND
 ...
 ```
-
 <!-- usagestop -->
 <!-- commands -->
-
-- [`sfdx org:switch [-g] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`](#sfdx-orgswitch--g---json---loglevel-tracedebuginfowarnerrorfataltracedebuginfowarnerrorfatal)
+* [`sfdx org:switch [-g] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`](#sfdx-orgswitch--g---json---loglevel-tracedebuginfowarnerrorfataltracedebuginfowarnerrorfatal)
 
 ## `sfdx org:switch [-g] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`
 
@@ -62,8 +58,7 @@ EXAMPLES
   $ sfdx gmotte:org:switch -g
 ```
 
-_See code: [src/commands/org/switch.ts](https://github.com/gaelmotte/gmotte-sfdx-plugin/blob/v0.3.4/src/commands/org/switch.ts)_
-
+_See code: [src/commands/org/switch.ts](https://github.com/gaelmotte/gmotte-sfdx-plugin/blob/v0.3.5/src/commands/org/switch.ts)_
 <!-- commandsstop -->
 <!-- debugging-your-plugin -->
 
