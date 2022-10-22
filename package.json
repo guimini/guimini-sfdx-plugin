@@ -1,7 +1,7 @@
 {
   "name": "@gaelmotte/gmotte-sfdx-plugin",
   "description": "Personal sfdx plugin to ease my everyday life",
-  "version": "0.2.0-alpha.0",
+  "version": "0.2.0-alpha.1",
   "author": "Gael Motte",
   "bugs": {
     "url": "https://github.com/gaelmotte/gmotte-sfdx-plugin/issues"
@@ -71,7 +71,6 @@
     "oclif-paths": "ts-node --project tsconfig.json -r tsconfig-paths/register node_modules/.bin/oclif",
     "test": "nyc --extension .ts --require ts-node/register mocha --forbid-only \"test/**/*.test.ts\"",
     "bumpversion": "is-prerelease && npm version minor -m \"v%s[ci skip]\"|| npm version patch -m \"v%s[ci skip]\"",
-
     "bumpprerelease": "is-prerelease &&  npm version prerelease --preid alpha -m \"v%s[ci skip]\"|| npm version preminor --preid alpha -m \"v%s[ci skip]\"",
     "posttest": "eslint src/**/*.ts test/**/*.ts",
     "version": "rm -rf lib && tsc -b && npm run oclif-paths manifest && npm run oclif-paths readme && git add README.md && git add -A -f lib && git add -f oclif.manifest.json",
