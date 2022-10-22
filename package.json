@@ -1,10 +1,10 @@
 {
-  "name": "@gaelmotte/sfdx-gmotte-plugin",
+  "name": "@gaelmotte/gmotte-sfdx-plugin",
   "description": "Personal sfdx plugin to ease my everyday life",
   "version": "0.0.1",
   "author": "Gael Motte",
   "bugs": {
-    "url": "https://github.com/gaelmotte/sfdx-gmotte-plugin/issues"
+    "url": "https://github.com/gaelmotte/gmotte-sfdx-plugin/issues"
   },
   "dependencies": {
     "@oclif/core": "^1",
