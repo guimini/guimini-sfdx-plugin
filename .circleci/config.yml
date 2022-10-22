@@ -63,11 +63,15 @@ jobs:
   bumpversion:
     <<: *base
     steps:
+      - gh/setup
       - checkout
       - restore_cache:
           <<: *restore_cache
       - attach_workspace:
           at: ~/cli
+      - run:
+          name: is Hotfix ?
+          commmand: HOTFIX=1 && npx not-prerelease && HOTFIX=0
       - run:
           name: Set Git Creds
           command: git config user.email "gael.motte@gmail.com" && git config user.name "Gael Motte"
@@ -75,8 +79,19 @@ jobs:
           fingerprints:
             - 'c3:9a:d1:80:21:fb:38:02:1c:65:77:03:51:c2:0e:37'
       - run:
+          name: IF HOTFIX create branch and push
+          command: HOTFIX && branch="hotfixback-$(date +'%Y-%m-%d-%H-%M')" && git checkout -b  $branch && git push --set-upstream origin $branch;
+      - run:
+          command: |
+            $HOTFIX && gh pr create --title $branch -B develop
+          name: IF HOTFIX Create Pull Request
+      - run:
           name: Bump Minor or Patch
           command: npm run bumpversion
+      - run:
+          command: |
+            $HOTFIX || gh pr create --title $branch -B develop
+          name: IF ! HOTFIX Create Pull Request if standard releases
 
   publishtonpm:
     <<: *base
@@ -104,13 +119,6 @@ jobs:
           <<: *restore_cache
       - attach_workspace:
           at: ~/cli
-      - run:
-          name: create branch and push
-          command: branch="hotfixback-$(date +'%Y-%m-%d-%H-%M')"; npx not-prerelease && git checkout -b  $branch && git push --set-upstream origin $branch;
-      - run:
-          command: |
-            npx not-prerelease && gh pr create --title $branch -B develop
-          name: Create Pull Request if HOTFIX
 
   releaseback:
     <<: *base
@@ -122,10 +130,6 @@ jobs:
           <<: *restore_cache
       - attach_workspace:
           at: ~/cli
-      - run:
-          command: |
-            npx is-prerelease &&  gh pr create --title $branch -B develop
-          name: Create Pull Request if standard releases
 
 workflows:
   version: 2
