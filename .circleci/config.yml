@@ -30,7 +30,8 @@ jobs:
     <<: *base
     steps:
       - checkout
-      - <<: *restore_cache
+      - restore_cache:
+          <<: *restore_cache
       - run:
           name: Install dependencies
           command: npm ci
@@ -43,7 +44,8 @@ jobs:
     working_directory: ~/cli
     steps:
       - checkout
-      - <<: *restore_cache
+      - restore_cache:
+          <<: *restore_cache
       - attach_workspace:
           at: ~/cli
       - run:
