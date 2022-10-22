@@ -1,45 +1,44 @@
 ---
 version: 2
 jobs:
-  CI: &test
+  BASE: &base # Only used to centralized some common configs
     docker:
       - image: node:latest
     working_directory: ~/cli
+  CI: &test
     steps:
       - checkout
       - restore_cache: &restore_cache
           keys:
-            - v1-npm-{{checksum ".circleci/config.yml"}}-{{checksum "yarn.lock"}}
+            - v1-npm-{{checksum ".circleci/config.yml"}}-{{checksum "package-lock.json"}}
             - v1-npm-{{checksum ".circleci/config.yml"}}
       - run:
           name: Install dependencies
-          command: yarn
+          command: npm ci
       - run:
           name: Build plugin
-          command: yarn prepack
+          command: npm prepack
       - run:
           name: Testing
-          command: yarn test
+          command: npm test
       - persist_to_workspace:
           root: ~/cli
           paths:
             - lib
             - node_modules
   cache:
-    <<: *test
+    <<: *base
     steps:
       - checkout
       - run:
           name: Install dependencies
-          command: yarn
+          command: npm ci
       - save_cache:
-          key: v1-npm-{{checksum ".circleci/config.yml"}}-{{checksum "yarn.lock"}}
+          key: v1-npm-{{checksum ".circleci/config.yml"}}-{{checksum "package-lock.json"}}
           paths:
             - ~/cli/node_modules
-            - /usr/local/share/.cache/yarn
-            - /usr/local/share/.config/yarn
   CD:
-    <<: *test
+    <<: *base
     working_directory: ~/cli
     steps:
       - checkout
