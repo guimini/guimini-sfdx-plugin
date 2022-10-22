@@ -66,7 +66,7 @@
     "url": "git+https://github.com/gaelmotte/gmotte-sfdx-plugin.git"
   },
   "scripts": {
-    "build": "tsc -p .",
+    "build": "rm -rf lib && tsc -p .",
     "lint": "eslint src/**/*.ts test/**/*.ts",
     "postpack": "rm -f oclif.manifest.json",
     "posttest": "eslint src/**/*.ts test/**/*.ts",
@@ -75,7 +75,7 @@
     "test": "nyc --extension .ts --require ts-node/register mocha --forbid-only \"test/**/*.test.ts\"",
     "bumpversion": "is-prerelease && npm version minor -m \"v%s[ci skip]\"|| npm version patch -m \"v%s[ci skip]\"",
     "bumpprerelease": "npm version preminor --preid alpha",
-    "version": "oclif readme && git add README.md",
+    "version": "oclif readme && git add README.md && git add -A lib",
     "postversion": ""
   }
 }

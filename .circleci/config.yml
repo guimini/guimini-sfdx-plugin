@@ -5,7 +5,8 @@ jobs:
     docker:
       - image: node:latest
     working_directory: ~/cli
-  CI: &test
+
+  installdeps:
     <<: *base
     steps:
       - checkout
@@ -16,9 +17,18 @@ jobs:
       - run:
           name: Install dependencies
           command: npm ci
+      - save_cache:
+          key: v1-npm-{{checksum ".circleci/config.yml"}}-{{checksum "package-lock.json"}}
+          paths:
+            - ~/cli/node_modules
+
+  CI: &test
+    <<: *base
+    steps:
+      - checkout
       - run:
           name: Build plugin
-          command: npm run prepack
+          command: npm run build
       - run:
           name: Testing
           command: npm run test
@@ -26,19 +36,6 @@ jobs:
           root: ~/cli
           paths:
             - lib
-  cache:
-    <<: *base
-    steps:
-      - checkout
-      - restore_cache:
-          <<: *restore_cache
-      - run:
-          name: Install dependencies
-          command: npm ci
-      - save_cache:
-          key: v1-npm-{{checksum ".circleci/config.yml"}}-{{checksum "package-lock.json"}}
-          paths:
-            - ~/cli/node_modules
 
   bumpprerelease:
     <<: *base
@@ -51,6 +48,18 @@ jobs:
       - run:
           name: Bump Preminor
           command: npm run bumpprerelease
+
+  bumpversion:
+    <<: *base
+    steps:
+      - checkout
+      - restore_cache:
+          <<: *restore_cache
+      - attach_workspace:
+          at: ~/cli
+      - run:
+          name: Bump Minor or Patch
+          command: npm run bumpversion
 
   publish:
     <<: *base
@@ -72,49 +81,44 @@ workflows:
   version: 2
   'New Code Checks':
     jobs:
-      - CI:
+      - installdeps:
           filters:
             branches:
               ignore:
                 - main
                 - develop
-      - cache:
+      - CI:
           requires:
-            - CI
-
-          # filters:
-          #   tags:
-          #     only: /^v.*/
-          #   branches:
-          #     ignore: /.*/
+            - installdeps
   'Develop Checks':
     jobs:
-      - CI:
+      - installdeps:
           filters:
             branches:
               only: develop
-      - bumpprerelease:
+      - CI:
           requires:
-            - CI
-      - cache:
+            - installdeps
+      - bumpprerelease:
           requires:
             - CI
 
   'Main Checks':
     jobs:
-      - CI:
+      - installdeps:
           filters:
             branches:
               only: main
-      # - Version:
-      #     requires:
-      #       - CI
-      - cache:
+      - CI:
+          requires:
+            - installdeps
+      - bumpversion:
           requires:
             - CI
+
   'Publish':
     jobs:
-      - CI:
+      - installdeps:
           filters:
             branches:
               ignore: /.*/
@@ -122,7 +126,4 @@ workflows:
               only: /^v.*/
       - publish:
           requires:
-            - CI
-      - cache:
-          requires:
-            - CI
+            - installdeps
