@@ -75,7 +75,7 @@ jobs:
           name: Bump Minor or Patch
           command: npm run bumpversion
 
-  publish:
+  publishtonpm:
     <<: *base
     working_directory: ~/cli
     steps:
@@ -138,6 +138,6 @@ workflows:
               ignore: /.*/
             tags:
               only: /^v.*/
-      - publish:
+      - publishtonpm:
           requires:
             - installdeps
