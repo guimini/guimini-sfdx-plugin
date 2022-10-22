@@ -11,11 +11,13 @@ Personal sfdx plugin to ease my everyday life
 [![License](https://img.shields.io/npm/l/gmotte.svg)](https://github.com/gaelmotte/gmotte-sfdx-plugin/blob/master/package.json)
 
 <!-- toc -->
-* [gmotte](#gmotte)
-* [Debugging your plugin](#debugging-your-plugin)
-<!-- tocstop -->
-<!-- install -->
-<!-- usage -->
+
+- [gmotte](#gmotte)
+- [Debugging your plugin](#debugging-your-plugin)
+  <!-- tocstop -->
+  <!-- install -->
+  <!-- usage -->
+
 ```sh-session
 $ npm install -g @gaelmotte/gmotte-sfdx-plugin
 $ sfdx COMMAND
@@ -27,9 +29,11 @@ USAGE
   $ sfdx COMMAND
 ...
 ```
+
 <!-- usagestop -->
 <!-- commands -->
-* [`sfdx org:switch [-g] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`](#sfdx-orgswitch--g---json---loglevel-tracedebuginfowarnerrorfataltracedebuginfowarnerrorfatal)
+
+- [`sfdx org:switch [-g] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`](#sfdx-orgswitch--g---json---loglevel-tracedebuginfowarnerrorfataltracedebuginfowarnerrorfatal)
 
 ## `sfdx org:switch [-g] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`
 
@@ -58,6 +62,7 @@ EXAMPLES
 ```
 
 _See code: [src/commands/org/switch.ts](https://github.com/gaelmotte/gmotte-sfdx-plugin/blob/v0.2.0/src/commands/org/switch.ts)_
+
 <!-- commandsstop -->
 <!-- debugging-your-plugin -->
 
@@ -88,3 +93,5 @@ $ NODE_OPTIONS=--inspect-brk bin/run hello:org -u myOrg@example.com
 6. Hit the green play button at the top middle of VS Code (this play button will be to the right of the play button that you clicked in step #5).
    <br><img src=".images/vscodeScreenshot.png" width="480" height="278"><br>
    Congrats, you are debugging!
+
+# GitFlow
