@@ -74,7 +74,7 @@
     "prepack": "rm -rf lib && tsc -b && npm run oclif-paths manifest && npm run oclif-paths readme",
     "test": "nyc --extension .ts --require ts-node/register mocha --forbid-only \"test/**/*.test.ts\"",
     "bumpversion": "is-prerelease && npm version minor -m \"v%s[ci skip]\"|| npm version patch -m \"v%s[ci skip]\"",
-    "bumpprerelease": "npm version prerelease --preid alpha",
+    "bumpprerelease": "npm version preminor --preid alpha",
     "version": "oclif readme && git add README.md",
     "postversion": ""
   }
