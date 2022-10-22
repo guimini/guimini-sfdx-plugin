@@ -26,11 +26,11 @@ jobs:
           root: ~/cli
           paths:
             - lib
-            - node_modules
   cache:
     <<: *base
     steps:
       - checkout
+      - <<: *restore_cache
       - run:
           name: Install dependencies
           command: npm ci
@@ -38,11 +38,12 @@ jobs:
           key: v1-npm-{{checksum ".circleci/config.yml"}}-{{checksum "package-lock.json"}}
           paths:
             - ~/cli/node_modules
-  CD:
+  publish:
     <<: *base
     working_directory: ~/cli
     steps:
       - checkout
+      - <<: *restore_cache
       - attach_workspace:
           at: ~/cli
       - run:
@@ -54,18 +55,57 @@ jobs:
 
 workflows:
   version: 2
-  'gmotte':
+  'New Code Checks':
     jobs:
-      - CI
-      - CD:
+      - CI:
+          filters:
+            branches:
+              ignore:
+                - main
+                - develop
+      - cache:
           requires:
             - CI
+
+          # filters:
+          #   tags:
+          #     only: /^v.*/
+          #   branches:
+          #     ignore: /.*/
+  'Develop Checks':
+    jobs:
+      - CI:
+          filters:
+            branches:
+              only: develop
+      # - Version
+      #     requires:
+      #       - CI
+      - cache:
+          requires:
+            - CI
+
+  'Main Checks':
+    jobs:
+      - CI:
           filters:
             branches:
               only: main
+      # - Version
+      #     requires:
+      #       - CI
       - cache:
+          requires:
+            - CI
+  'Publish':
+    jobs:
+      - CI:
           filters:
             tags:
               only: /^v.*/
-            branches:
-              ignore: /.*/
+      - publish:
+          requires:
+            - CI
+      - cache:
+          requires:
+            - CI
