@@ -1,7 +1,7 @@
 ---
 version: 2
 orbs:
-  gh: circleci/github-cli@2.0
+  gh: circleci/github-cli@2.1.1
 
 jobs:
   BASE: &base # Only used to centralized some common configs
@@ -98,7 +98,7 @@ jobs:
     <<: *base
     working_directory: ~/cli
     steps:
-      - gh/install
+      - gh/setup
       - checkout
       - restore_cache:
           <<: *restore_cache
@@ -106,7 +106,7 @@ jobs:
           at: ~/cli
       - run:
           name: create branch and push
-          command: branch="hotfixback-$(date +'%Y-%m-%d-%H-%M')";git checkout -b  $branch; git push --set-upstream origin $branch;
+          command: branch="hotfixback-$(date +'%Y-%m-%d-%H-%M')"; npx not-prerelease && git checkout -b  $branch && git push --set-upstream origin $branch;
       - run:
           command: |
             npx not-prerelease && gh pr create --title $branch -B develop
@@ -116,7 +116,7 @@ jobs:
     <<: *base
     working_directory: ~/cli
     steps:
-      - gh/install
+      - gh/setup
       - checkout
       - restore_cache:
           <<: *restore_cache
