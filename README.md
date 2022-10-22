@@ -21,7 +21,7 @@ $ npm install -g @gaelmotte/gmotte-sfdx-plugin
 $ sfdx COMMAND
 running command...
 $ sfdx (--version)
-@gaelmotte/gmotte-sfdx-plugin/0.1.0 darwin-arm64 node-v18.11.0
+@gaelmotte/gmotte-sfdx-plugin/0.1.0-alpha.0 linux-x64 node-v19.0.0
 $ sfdx --help [COMMAND]
 USAGE
   $ sfdx COMMAND
@@ -29,7 +29,35 @@ USAGE
 ```
 <!-- usagestop -->
 <!-- commands -->
+* [`sfdx org:switch [-g] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`](#sfdx-orgswitch--g---json---loglevel-tracedebuginfowarnerrorfataltracedebuginfowarnerrorfatal)
 
+## `sfdx org:switch [-g] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`
+
+Interractively switch default username and default devhub
+
+```
+USAGE
+  $ sfdx org:switch [-g] [--json] [--loglevel
+    trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+FLAGS
+  -g, --global                                                                      Set the configuration variables
+                                                                                    globally, so they can be used from
+                                                                                    any Salesforce DX project.
+  --json                                                                            format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for
+                                                                                    this command invocation
+
+DESCRIPTION
+  Interractively switch default username and default devhub
+
+EXAMPLES
+  $ sfdx gmotte:org:switch
+
+  $ sfdx gmotte:org:switch -g
+```
+
+_See code: [src/commands/org/switch.ts](https://github.com/gaelmotte/gmotte-sfdx-plugin/blob/v0.1.0-alpha.0/src/commands/org/switch.ts)_
 <!-- commandsstop -->
 <!-- debugging-your-plugin -->
 
