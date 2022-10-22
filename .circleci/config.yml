@@ -109,8 +109,8 @@ jobs:
           command: branch="hotfixback-$(date +'%Y-%m-%d-%H-%M')";git checkout -b  $branch; git push --set-upstream origin $branch;
       - run:
           command: |
-            gh pr create --title $branch -B develop
-          name: Create Pull Request
+            npx not-prerelease && gh pr create --title $branch -B develop
+          name: Create Pull Request if HOTFIX
 
   releaseback:
     <<: *base
@@ -124,8 +124,8 @@ jobs:
           at: ~/cli
       - run:
           command: |
-            gh pr create --title $branch -B develop
-          name: Create Pull Request
+            npx is-prerelease &&  gh pr create --title $branch -B develop
+          name: Create Pull Request if standard releases
 
 workflows:
   version: 2
