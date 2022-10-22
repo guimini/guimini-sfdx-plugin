@@ -54,7 +54,7 @@ jobs:
 
 workflows:
   version: 2
-  "gmotte":
+  'gmotte':
     jobs:
       - CI
       - CD:
