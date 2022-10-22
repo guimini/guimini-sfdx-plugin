@@ -106,7 +106,7 @@ jobs:
           at: ~/cli
       - run:
           name: create branch and push
-          command: branch="hotfixback-$(date +'%Y-%m-%d-%H-%M')";git checkout -b  $branch; git push --set-upstream origin $branch;
+          command: branch="hotfixback-$(date +'%Y-%m-%d-%H-%M')"; npx not-prerelease && git checkout -b  $branch && git push --set-upstream origin $branch;
       - run:
           command: |
             npx not-prerelease && gh pr create --title $branch -B develop
