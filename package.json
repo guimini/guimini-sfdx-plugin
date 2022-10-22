@@ -1,7 +1,7 @@
 {
   "name": "@gaelmotte/gmotte-sfdx-plugin",
   "description": "Personal sfdx plugin to ease my everyday life",
-  "version": "0.2.1",
+  "version": "0.3.0-alpha.2",
   "author": "Gael Motte",
   "bugs": {
     "url": "https://github.com/gaelmotte/gmotte-sfdx-plugin/issues"
@@ -29,6 +29,7 @@
     "eslint-plugin-jsdoc": "^35",
     "eslint-plugin-prettier": "^3",
     "eslint-plugin-typescript": "^0",
+    "gh": "^2.8.9",
     "mocha": "^9",
     "not-prerelease": "^1.0.1",
     "nyc": "^15",
