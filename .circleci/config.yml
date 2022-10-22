@@ -49,7 +49,7 @@ jobs:
           at: ~/cli
       - run:
           name: Bump Preminor
-          command: is-prerelease && npm version minor -m \"v%s[ci skip]\" || npm version patch -m \"v%s[ci skip]\"
+          command: npm run bumpprerelease
 
   bumpversion:
     <<: *base
@@ -61,7 +61,7 @@ jobs:
           at: ~/cli
       - run:
           name: Bump Minor or Patch
-          command: npm version preminor --preid alpha
+          command: npm run bumpversion
 
   publish:
     <<: *base
