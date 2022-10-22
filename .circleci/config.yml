@@ -50,6 +50,9 @@ jobs:
       - run:
           name: Set Git Creds
           command: git config user.email "gael.motte@gmail.com" && git config user.name "Gael Motte"
+      - add_ssh_keys:
+          fingerprints:
+            - 'SHA256:NgPyF6+K6yG+j5LTvYHAAH0LXkcgbRfS3Av8Sv6+dFI gael.motte@gmail.com'
       - run:
           name: Bump Preminor
           command: npm run bumpprerelease
@@ -65,6 +68,9 @@ jobs:
       - run:
           name: Set Git Creds
           command: git config user.email "gael.motte@gmail.com" && git config user.name "Gael Motte"
+      - add_ssh_keys:
+          fingerprints:
+            - 'SHA256:NgPyF6+K6yG+j5LTvYHAAH0LXkcgbRfS3Av8Sv6+dFI gael.motte@gmail.com'
       - run:
           name: Bump Minor or Patch
           command: npm run bumpversion
