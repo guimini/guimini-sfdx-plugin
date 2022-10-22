@@ -1,5 +1,8 @@
 ---
 version: 2
+orbs:
+  gh: circleci/github-cli@2.0
+
 jobs:
   BASE: &base # Only used to centralized some common configs
     docker:
@@ -91,6 +94,39 @@ jobs:
           name: Publish package
           command: npm publish --access public
 
+  hotfixback:
+    <<: *base
+    working_directory: ~/cli
+    steps:
+      - gh/install
+      - checkout
+      - restore_cache:
+          <<: *restore_cache
+      - attach_workspace:
+          at: ~/cli
+      - run:
+          name: create branch and push
+          command: branch="hotfixback-$(date +'%Y-%m-%d-%H-%M')";git checkout -b  $branch; git push --set-upstream origin $branch;
+      - run:
+          command: |
+            gh pr create --title $branch -B develop
+          name: Create Pull Request
+
+  releaseback:
+    <<: *base
+    working_directory: ~/cli
+    steps:
+      - gh/install
+      - checkout
+      - restore_cache:
+          <<: *restore_cache
+      - attach_workspace:
+          at: ~/cli
+      - run:
+          command: |
+            gh pr create --title $branch -B develop
+          name: Create Pull Request
+
 workflows:
   version: 2
   'New Code Checks':
@@ -126,9 +162,15 @@ workflows:
       - CI:
           requires:
             - installdeps
-      - bumpversion:
+      - hotfixback:
           requires:
             - CI
+      - bumpversion:
+          requires:
+            - hotfixback
+      - releaseback:
+          requires:
+            - bumpversion
 
   'Publish':
     jobs:
