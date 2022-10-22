@@ -91,8 +91,7 @@ jobs:
           command: |
             D=$(date +'%Y-%m-%d-%H-%M'); 
             B="merge-back-$D";  
-            git checkout -b $B && git push --set-upstream origin $B \\
-            &&  git checkout gh pr create --title "Merge back $D" -B develop -H main -b "Make sure to keep the most advanced version number when handling the merge over the various conflicted files, if any"
+            git checkout -b $B && git push --set-upstream origin $B && git checkout gh pr create --title "Merge back $D" -B develop -H main -b "Make sure to keep the most advanced version number when handling the merge over the various conflicted files, if any"
           name: Create Pull Request for merge back
 
   publishtonpm:
