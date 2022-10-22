@@ -57,7 +57,6 @@ EXAMPLES
 
   $ sfdx gmotte:org:switch -g
 ```
-
 _See code: [src/commands/org/switch.ts](https://github.com/gaelmotte/gmotte-sfdx-plugin/blob/v0.3.4/src/commands/org/switch.ts)_
 <!-- commandsstop -->
 <!-- debugging-your-plugin -->
