@@ -2,8 +2,5 @@
   "commandDescription": "Interractively switch default username and default devhub",
   "errorNoOrgResults": "No results found for the org.",
   "flags.global.summary": "Set the configuration variables globally, so they can be used from any Salesforce DX project.",
-  "examples": [
-    "sfdx gmotte:org:switch",
-    "sfdx gmotte:org:switch -g"
-  ]
+  "examples": ["sfdx gmotte:org:switch", "sfdx gmotte:org:switch -g"]
 }
