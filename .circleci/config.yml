@@ -6,6 +6,7 @@ jobs:
       - image: node:latest
     working_directory: ~/cli
   CI: &test
+    <<: *base
     steps:
       - checkout
       - restore_cache: &restore_cache
