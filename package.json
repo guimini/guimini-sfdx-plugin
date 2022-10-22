@@ -1,10 +1,10 @@
 {
-  "name": "@gaelmotte/sfdx-gmotte-plugin",
+  "name": "@gaelmotte/gmotte-sfdx-plugin",
   "description": "Personal sfdx plugin to ease my everyday life",
-  "version": "0.0.1",
+  "version": "0.2.0-alpha.3",
   "author": "Gael Motte",
   "bugs": {
-    "url": "https://github.com/gaelmotte/sfdx-gmotte-plugin/issues"
+    "url": "https://github.com/gaelmotte/gmotte-sfdx-plugin/issues"
   },
   "dependencies": {
     "@oclif/core": "^1",
@@ -30,11 +30,13 @@
     "eslint-plugin-prettier": "^3",
     "eslint-plugin-typescript": "^0",
     "mocha": "^9",
+    "not-prerelease": "^1.0.1",
     "nyc": "^15",
     "oclif": "^3",
     "prettier": "^2",
     "sinon": "10.0.0",
     "ts-node": "^10",
+    "tsconfig-paths": "^4.1.0",
     "typescript": "4"
   },
   "engines": {
@@ -45,7 +47,7 @@
     "/messages",
     "/npm-shrinkwrap.json"
   ],
-  "homepage": "https://github.com/gaelmotte/sfdx-gmotte-plugin",
+  "homepage": "https://github.com/gaelmotte/gmotte-sfdx-plugin",
   "keywords": [
     "sfdx-plugin"
   ],
@@ -61,15 +63,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gaelmotte/sfdx-gmotte-plugin.git"
+    "url": "git+https://github.com/gaelmotte/gmotte-sfdx-plugin.git"
   },
   "scripts": {
-    "build": "tsc -p .",
+    "build": "rm -rf lib && tsc -p .",
     "lint": "eslint src/**/*.ts test/**/*.ts",
-    "postpack": "rm -f oclif.manifest.json",
-    "posttest": "eslint src/**/*.ts test/**/*.ts",
-    "prepack": "rm -rf lib && tsc -b && oclif manifest && oclif readme",
+    "oclif-paths": "ts-node --project tsconfig.json -r tsconfig-paths/register node_modules/.bin/oclif",
     "test": "nyc --extension .ts --require ts-node/register mocha --forbid-only \"test/**/*.test.ts\"",
-    "version": "oclif readme && git add README.md"
+    "bumpversion": "is-prerelease && npm version minor -m \"v%s[ci skip]\"|| npm version patch -m \"v%s[ci skip]\"",
+    "bumpprerelease": "is-prerelease &&  npm version prerelease --preid alpha -m \"v%s[ci skip]\"|| npm version preminor --preid alpha -m \"v%s[ci skip]\"",
+    "posttest": "eslint src/**/*.ts test/**/*.ts",
+    "version": "rm -rf lib && tsc -b && npm run oclif-paths manifest && npm run oclif-paths readme && git add README.md && git add -A -f lib && git add -f oclif.manifest.json",
+    "postversion": "git push && git push --tags"
   }
 }
