@@ -141,3 +141,8 @@ workflows:
       - publishtonpm:
           requires:
             - installdeps
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
