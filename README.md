@@ -3,17 +3,62 @@
 Personal sfdx plugin to ease my everyday life
 
 [![Version](https://img.shields.io/npm/v/gmotte.svg)](https://npmjs.org/package/gmotte)
-[![CircleCI](https://circleci.com/gh/gaelmotte/sfdx-gmotte-plugin/tree/master.svg?style=shield)](https://circleci.com/gh/gaelmotte/sfdx-gmotte-plugin/tree/master)
-[![Appveyor CI](https://ci.appveyor.com/api/projects/status/github/gaelmotte/sfdx-gmotte-plugin?branch=master&svg=true)](https://ci.appveyor.com/project/heroku/sfdx-gmotte-plugin/branch/master)
-[![Greenkeeper](https://badges.greenkeeper.io/gaelmotte/sfdx-gmotte-plugin.svg)](https://greenkeeper.io/)
-[![Known Vulnerabilities](https://snyk.io/test/github/gaelmotte/sfdx-gmotte-plugin/badge.svg)](https://snyk.io/test/github/gaelmotte/sfdx-gmotte-plugin)
+[![CircleCI](https://circleci.com/gh/gaelmotte/gmotte-sfdx-plugin/tree/master.svg?style=shield)](https://circleci.com/gh/gaelmotte/gmotte-sfdx-plugin/tree/master)
+[![Appveyor CI](https://ci.appveyor.com/api/projects/status/github/gaelmotte/gmotte-sfdx-plugin?branch=master&svg=true)](https://ci.appveyor.com/project/heroku/gmotte-sfdx-plugin/branch/master)
+[![Greenkeeper](https://badges.greenkeeper.io/gaelmotte/gmotte-sfdx-plugin.svg)](https://greenkeeper.io/)
+[![Known Vulnerabilities](https://snyk.io/test/github/gaelmotte/gmotte-sfdx-plugin/badge.svg)](https://snyk.io/test/github/gaelmotte/gmotte-sfdx-plugin)
 [![Downloads/week](https://img.shields.io/npm/dw/gmotte.svg)](https://npmjs.org/package/gmotte)
-[![License](https://img.shields.io/npm/l/gmotte.svg)](https://github.com/gaelmotte/sfdx-gmotte-plugin/blob/master/package.json)
+[![License](https://img.shields.io/npm/l/gmotte.svg)](https://github.com/gaelmotte/gmotte-sfdx-plugin/blob/master/package.json)
 
 <!-- toc -->
+* [gmotte](#gmotte)
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
 <!-- install -->
 <!-- usage -->
+```sh-session
+$ npm install -g @gaelmotte/gmotte-sfdx-plugin
+$ sfdx COMMAND
+running command...
+$ sfdx (--version)
+@gaelmotte/gmotte-sfdx-plugin/0.0.1 darwin-arm64 node-v18.11.0
+$ sfdx --help [COMMAND]
+USAGE
+  $ sfdx COMMAND
+...
+```
+<!-- usagestop -->
 <!-- commands -->
+* [`sfdx org:switch [-g] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`](#sfdx-orgswitch--g---json---loglevel-tracedebuginfowarnerrorfataltracedebuginfowarnerrorfatal)
+
+## `sfdx org:switch [-g] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`
+
+Interractively switch default username and default devhub
+
+```
+USAGE
+  $ sfdx org:switch [-g] [--json] [--loglevel
+    trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+FLAGS
+  -g, --global                                                                      Set the configuration variables
+                                                                                    globally, so they can be used from
+                                                                                    any Salesforce DX project.
+  --json                                                                            format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for
+                                                                                    this command invocation
+
+DESCRIPTION
+  Interractively switch default username and default devhub
+
+EXAMPLES
+  $ sfdx gmotte:org:switch
+
+  $ sfdx gmotte:org:switch -g
+```
+
+_See code: [src/commands/org/switch.ts](https://github.com/gaelmotte/gmotte-sfdx-plugin/blob/v0.0.1/src/commands/org/switch.ts)_
+<!-- commandsstop -->
 <!-- debugging-your-plugin -->
 
 # Debugging your plugin
