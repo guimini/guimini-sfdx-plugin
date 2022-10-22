@@ -71,7 +71,7 @@
     "oclif-paths": "ts-node --project tsconfig.json -r tsconfig-paths/register node_modules/.bin/oclif",
     "test": "nyc --extension .ts --require ts-node/register mocha --forbid-only \"test/**/*.test.ts\"",
     "bumpversion": "is-prerelease && npm version minor -m \"v%s[ci skip]\"|| npm version patch -m \"v%s[ci skip]\"",
-    "bumpprerelease": "npm version preminor --preid alpha",
+    "bumpprerelease": "npm version preminor --preid alpha -m \"v%s[ci skip]\"",
 
     "posttest": "eslint src/**/*.ts test/**/*.ts",
     
