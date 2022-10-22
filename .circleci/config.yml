@@ -40,7 +40,7 @@ jobs:
           paths:
             - ~/cli/node_modules
 
-  version:
+  bumpprerelease:
     <<: *base
     steps:
       - checkout
@@ -48,7 +48,9 @@ jobs:
           <<: *restore_cache
       - attach_workspace:
           at: ~/cli
-      - npm
+      - run:
+          name: Bump Preminor
+          command: npm run bumpprerelease
 
   publish:
     <<: *base
@@ -91,7 +93,7 @@ workflows:
           filters:
             branches:
               only: develop
-      - preversion:
+      - bumpprerelease:
           requires:
             - CI
       - cache:
