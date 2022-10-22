@@ -3,17 +3,34 @@
 Personal sfdx plugin to ease my everyday life
 
 [![Version](https://img.shields.io/npm/v/gmotte.svg)](https://npmjs.org/package/gmotte)
-[![CircleCI](https://circleci.com/gh/gaelmotte/sfdx-gmotte-plugin/tree/master.svg?style=shield)](https://circleci.com/gh/gaelmotte/sfdx-gmotte-plugin/tree/master)
-[![Appveyor CI](https://ci.appveyor.com/api/projects/status/github/gaelmotte/sfdx-gmotte-plugin?branch=master&svg=true)](https://ci.appveyor.com/project/heroku/sfdx-gmotte-plugin/branch/master)
-[![Greenkeeper](https://badges.greenkeeper.io/gaelmotte/sfdx-gmotte-plugin.svg)](https://greenkeeper.io/)
-[![Known Vulnerabilities](https://snyk.io/test/github/gaelmotte/sfdx-gmotte-plugin/badge.svg)](https://snyk.io/test/github/gaelmotte/sfdx-gmotte-plugin)
+[![CircleCI](https://circleci.com/gh/gaelmotte/gmotte-sfdx-plugin/tree/master.svg?style=shield)](https://circleci.com/gh/gaelmotte/gmotte-sfdx-plugin/tree/master)
+[![Appveyor CI](https://ci.appveyor.com/api/projects/status/github/gaelmotte/gmotte-sfdx-plugin?branch=master&svg=true)](https://ci.appveyor.com/project/heroku/gmotte-sfdx-plugin/branch/master)
+[![Greenkeeper](https://badges.greenkeeper.io/gaelmotte/gmotte-sfdx-plugin.svg)](https://greenkeeper.io/)
+[![Known Vulnerabilities](https://snyk.io/test/github/gaelmotte/gmotte-sfdx-plugin/badge.svg)](https://snyk.io/test/github/gaelmotte/gmotte-sfdx-plugin)
 [![Downloads/week](https://img.shields.io/npm/dw/gmotte.svg)](https://npmjs.org/package/gmotte)
-[![License](https://img.shields.io/npm/l/gmotte.svg)](https://github.com/gaelmotte/sfdx-gmotte-plugin/blob/master/package.json)
+[![License](https://img.shields.io/npm/l/gmotte.svg)](https://github.com/gaelmotte/gmotte-sfdx-plugin/blob/master/package.json)
 
 <!-- toc -->
+* [gmotte](#gmotte)
+* [Debugging your plugin](#debugging-your-plugin)
+<!-- tocstop -->
 <!-- install -->
 <!-- usage -->
+```sh-session
+$ npm install -g @gaelmotte/gmotte-sfdx-plugin
+$ sfdx COMMAND
+running command...
+$ sfdx (--version)
+@gaelmotte/gmotte-sfdx-plugin/0.1.0 darwin-arm64 node-v18.11.0
+$ sfdx --help [COMMAND]
+USAGE
+  $ sfdx COMMAND
+...
+```
+<!-- usagestop -->
 <!-- commands -->
+
+<!-- commandsstop -->
 <!-- debugging-your-plugin -->
 
 # Debugging your plugin

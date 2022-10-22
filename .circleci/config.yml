@@ -5,7 +5,9 @@ jobs:
     docker:
       - image: node:latest
     working_directory: ~/cli
-  CI: &test
+
+  installdeps:
+    <<: *base
     steps:
       - checkout
       - restore_cache: &restore_cache
@@ -15,33 +17,59 @@ jobs:
       - run:
           name: Install dependencies
           command: npm ci
-      - run:
-          name: Build plugin
-          command: npm prepack
-      - run:
-          name: Testing
-          command: npm test
-      - persist_to_workspace:
-          root: ~/cli
-          paths:
-            - lib
-            - node_modules
-  cache:
-    <<: *base
-    steps:
-      - checkout
-      - run:
-          name: Install dependencies
-          command: npm ci
       - save_cache:
           key: v1-npm-{{checksum ".circleci/config.yml"}}-{{checksum "package-lock.json"}}
           paths:
             - ~/cli/node_modules
-  CD:
+
+  CI: &test
+    <<: *base
+    steps:
+      - checkout
+      - restore_cache:
+          <<: *restore_cache
+      - run:
+          name: Build plugin
+          command: npm run build
+      - run:
+          name: Testing
+          command: npm run test
+      - persist_to_workspace:
+          root: ~/cli
+          paths:
+            - lib
+
+  bumpprerelease:
+    <<: *base
+    steps:
+      - checkout
+      - restore_cache:
+          <<: *restore_cache
+      - attach_workspace:
+          at: ~/cli
+      - run:
+          name: Bump Preminor
+          command: npm run bumpprerelease
+
+  bumpversion:
+    <<: *base
+    steps:
+      - checkout
+      - restore_cache:
+          <<: *restore_cache
+      - attach_workspace:
+          at: ~/cli
+      - run:
+          name: Bump Minor or Patch
+          command: npm run bumpversion
+
+  publish:
     <<: *base
     working_directory: ~/cli
     steps:
       - checkout
+      - restore_cache:
+          <<: *restore_cache
       - attach_workspace:
           at: ~/cli
       - run:
@@ -53,18 +81,51 @@ jobs:
 
 workflows:
   version: 2
-  'gmotte':
+  'New Code Checks':
     jobs:
-      - CI
-      - CD:
+      - installdeps:
+          filters:
+            branches:
+              ignore:
+                - main
+                - develop
+      - CI:
+          requires:
+            - installdeps
+  'Develop Checks':
+    jobs:
+      - installdeps:
+          filters:
+            branches:
+              only: develop
+      - CI:
+          requires:
+            - installdeps
+      - bumpprerelease:
           requires:
             - CI
+
+  'Main Checks':
+    jobs:
+      - installdeps:
           filters:
             branches:
               only: main
-      - cache:
+      - CI:
+          requires:
+            - installdeps
+      - bumpversion:
+          requires:
+            - CI
+
+  'Publish':
+    jobs:
+      - installdeps:
           filters:
-            tags:
-              only: /^v.*/
             branches:
               ignore: /.*/
+            tags:
+              only: /^v.*/
+      - publish:
+          requires:
+            - installdeps
