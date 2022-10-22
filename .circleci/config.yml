@@ -1,19 +1,16 @@
 ---
-version: 2
+version: 2.1
 orbs:
   gh: circleci/github-cli@2.1.1
 
 jobs:
-  BASE: &base # Only used to centralized some common configs
+  installdeps:
     docker:
       - image: node:latest
     working_directory: ~/cli
-
-  installdeps:
-    <<: *base
     steps:
       - checkout
-      - restore_cache: &restore_cache
+      - restore_cache:
           keys:
             - v1-npm-{{checksum ".circleci/config.yml"}}-{{checksum "package-lock.json"}}
             - v1-npm-{{checksum ".circleci/config.yml"}}
@@ -26,11 +23,15 @@ jobs:
             - ~/cli/node_modules
 
   CI: &test
-    <<: *base
+    docker:
+      - image: node:latest
+    working_directory: ~/cli
     steps:
       - checkout
       - restore_cache:
-          <<: *restore_cache
+          keys:
+            - v1-npm-{{checksum ".circleci/config.yml"}}-{{checksum "package-lock.json"}}
+            - v1-npm-{{checksum ".circleci/config.yml"}}
       - run:
           name: Build plugin
           command: npm run build
@@ -43,11 +44,15 @@ jobs:
             - lib
 
   bumpprerelease:
-    <<: *base
+    docker:
+      - image: node:latest
+    working_directory: ~/cli
     steps:
       - checkout
       - restore_cache:
-          <<: *restore_cache
+          keys:
+            - v1-npm-{{checksum ".circleci/config.yml"}}-{{checksum "package-lock.json"}}
+            - v1-npm-{{checksum ".circleci/config.yml"}}
       - attach_workspace:
           at: ~/cli
       - run:
@@ -61,11 +66,16 @@ jobs:
           command: npm run bumpprerelease
 
   bumpversion:
-    <<: *base
+    docker:
+      - image: node:latest
+    working_directory: ~/cli
     steps:
+      - gh/setup
       - checkout
       - restore_cache:
-          <<: *restore_cache
+          keys:
+            - v1-npm-{{checksum ".circleci/config.yml"}}-{{checksum "package-lock.json"}}
+            - v1-npm-{{checksum ".circleci/config.yml"}}
       - attach_workspace:
           at: ~/cli
       - run:
@@ -77,14 +87,23 @@ jobs:
       - run:
           name: Bump Minor or Patch
           command: npm run bumpversion
+      - run:
+          command: |
+            D=$(date +'%Y-%m-%d-%H-%M'); 
+            B="merge-back-$D";  
+            git checkout -b $B && git push --set-upstream origin $B && gh pr create --title "Merge back $D" -B develop -H main -b "Make sure to keep the most advanced version number when handling the merge over the various conflicted files, if any"
+          name: Create Pull Request for merge back
 
   publishtonpm:
-    <<: *base
+    docker:
+      - image: node:latest
     working_directory: ~/cli
     steps:
       - checkout
       - restore_cache:
-          <<: *restore_cache
+          keys:
+            - v1-npm-{{checksum ".circleci/config.yml"}}-{{checksum "package-lock.json"}}
+            - v1-npm-{{checksum ".circleci/config.yml"}}
       - attach_workspace:
           at: ~/cli
       - run:
@@ -93,39 +112,6 @@ jobs:
       - run:
           name: Publish package
           command: npm publish --access public
-
-  hotfixback:
-    <<: *base
-    working_directory: ~/cli
-    steps:
-      - gh/setup
-      - checkout
-      - restore_cache:
-          <<: *restore_cache
-      - attach_workspace:
-          at: ~/cli
-      - run:
-          name: create branch and push
-          command: branch="hotfixback-$(date +'%Y-%m-%d-%H-%M')"; npx not-prerelease && git checkout -b  $branch && git push --set-upstream origin $branch;
-      - run:
-          command: |
-            npx not-prerelease && gh pr create --title $branch -B develop
-          name: Create Pull Request if HOTFIX
-
-  releaseback:
-    <<: *base
-    working_directory: ~/cli
-    steps:
-      - gh/setup
-      - checkout
-      - restore_cache:
-          <<: *restore_cache
-      - attach_workspace:
-          at: ~/cli
-      - run:
-          command: |
-            npx is-prerelease &&  gh pr create --title $branch -B develop
-          name: Create Pull Request if standard releases
 
 workflows:
   version: 2
@@ -162,15 +148,9 @@ workflows:
       - CI:
           requires:
             - installdeps
-      - hotfixback:
-          requires:
-            - CI
       - bumpversion:
           requires:
-            - hotfixback
-      - releaseback:
-          requires:
-            - bumpversion
+            - CI
 
   'Publish':
     jobs:
