@@ -48,6 +48,9 @@ jobs:
       - attach_workspace:
           at: ~/cli
       - run:
+          name: Set Git Creds
+          command: git config user.email "gael.motte@gmail.com" && git config user.name "Gael Motte"
+      - run:
           name: Bump Preminor
           command: npm run bumpprerelease
 
@@ -59,6 +62,9 @@ jobs:
           <<: *restore_cache
       - attach_workspace:
           at: ~/cli
+      - run:
+          name: Set Git Creds
+          command: git config user.email "gael.motte@gmail.com" && git config user.name "Gael Motte"
       - run:
           name: Bump Minor or Patch
           command: npm run bumpversion
