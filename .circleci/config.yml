@@ -101,6 +101,8 @@ workflows:
     jobs:
       - CI:
           filters:
+            branches:
+              ignore: /.*/
             tags:
               only: /^v.*/
       - publish:
