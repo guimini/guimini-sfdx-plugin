@@ -52,7 +52,7 @@ jobs:
           command: git config user.email "gael.motte@gmail.com" && git config user.name "Gael Motte"
       - add_ssh_keys:
           fingerprints:
-            - 'SHA256:NgPyF6+K6yG+j5LTvYHAAH0LXkcgbRfS3Av8Sv6+dFI gael.motte@gmail.com'
+            - 'c3:9a:d1:80:21:fb:38:02:1c:65:77:03:51:c2:0e:37'
       - run:
           name: Bump Preminor
           command: npm run bumpprerelease
@@ -70,7 +70,7 @@ jobs:
           command: git config user.email "gael.motte@gmail.com" && git config user.name "Gael Motte"
       - add_ssh_keys:
           fingerprints:
-            - 'SHA256:NgPyF6+K6yG+j5LTvYHAAH0LXkcgbRfS3Av8Sv6+dFI gael.motte@gmail.com'
+            - 'c3:9a:d1:80:21:fb:38:02:1c:65:77:03:51:c2:0e:37'
       - run:
           name: Bump Minor or Patch
           command: npm run bumpversion
