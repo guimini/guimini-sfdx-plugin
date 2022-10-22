@@ -18,10 +18,10 @@ jobs:
           command: npm ci
       - run:
           name: Build plugin
-          command: npm prepack
+          command: npm run prepack
       - run:
           name: Testing
-          command: npm test
+          command: npm run test
       - persist_to_workspace:
           root: ~/cli
           paths:
