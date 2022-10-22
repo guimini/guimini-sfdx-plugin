@@ -39,6 +39,17 @@ jobs:
           key: v1-npm-{{checksum ".circleci/config.yml"}}-{{checksum "package-lock.json"}}
           paths:
             - ~/cli/node_modules
+
+  version:
+    <<: *base
+    steps:
+      - checkout
+      - restore_cache:
+          <<: *restore_cache
+      - attach_workspace:
+          at: ~/cli
+      - npm
+
   publish:
     <<: *base
     working_directory: ~/cli
@@ -80,9 +91,9 @@ workflows:
           filters:
             branches:
               only: develop
-      # - Version
-      #     requires:
-      #       - CI
+      - preversion:
+          requires:
+            - CI
       - cache:
           requires:
             - CI
@@ -93,7 +104,7 @@ workflows:
           filters:
             branches:
               only: main
-      # - Version
+      # - Version:
       #     requires:
       #       - CI
       - cache:
