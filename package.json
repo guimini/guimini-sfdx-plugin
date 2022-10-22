@@ -68,14 +68,13 @@
   "scripts": {
     "build": "rm -rf lib && tsc -p .",
     "lint": "eslint src/**/*.ts test/**/*.ts",
-    "postpack": "rm -f oclif.manifest.json",
-    "posttest": "eslint src/**/*.ts test/**/*.ts",
     "oclif-paths": "ts-node --project tsconfig.json -r tsconfig-paths/register node_modules/.bin/oclif",
-    "prepack": "rm -rf lib && tsc -b && npm run oclif-paths manifest && npm run oclif-paths readme",
     "test": "nyc --extension .ts --require ts-node/register mocha --forbid-only \"test/**/*.test.ts\"",
-    "bumpversion": "is-prerelease && npm version minor -m \"v%s[ci skip]\"|| npm version patch -m \"v%s[ci skip]\"",
-    "bumpprerelease": "npm version preminor --preid alpha",
-    "version": "oclif readme && git add README.md && git add -A lib",
-    "postversion": ""
+    
+    "posttest": "eslint src/**/*.ts test/**/*.ts",
+    
+    "preversion": "rm -rf lib && tsc -b && npm run oclif-paths manifest && npm run oclif-paths readme",
+    "version": "git add README.md && git add -A lib && git add oclif.manifest.json",
+    "postversion": "git push && git push --tags"
   }
 }
