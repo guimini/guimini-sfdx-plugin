@@ -4,7 +4,7 @@ import { SfdxCommand, flags } from '@salesforce/command';
 import { Messages, AuthInfo, Config, OrgConfigProperties, OrgAuthorization } from '@salesforce/core';
 import { AnyJson } from '@salesforce/ts-types';
 
-import { packageName } from 'config';
+import { packageName } from '../../../config';
 // Initialize Messages with the current plugin directory
 Messages.importMessagesDirectory(__dirname);
 
