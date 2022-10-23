@@ -31,6 +31,12 @@ USAGE
 <!-- usagestop -->
 <!-- commands -->
 
+# Installation
+
+```
+sfdx plugins:install @gaelmotte/gmotte-sfdx-plugin
+```
+
 - [`sfdx org:switch [-g] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`](#sfdx-orgswitch--g---json---loglevel-tracedebuginfowarnerrorfataltracedebuginfowarnerrorfatal)
 
 ## `sfdx org:switch [-g] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`
