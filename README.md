@@ -8,44 +8,34 @@
 Personal sfdx plugin to ease my everyday life
 
 <!-- toc -->
-
-- [gmotte](#gmotte)
-- [Debugging your plugin](#debugging-your-plugin)
-- [GitFlow](#gitflow)
-  <!-- tocstop -->
+* [@gaelmotte/gmotte-sfdx-plugin](#gaelmottegmotte-sfdx-plugin)
+* [Debugging your plugin](#debugging-your-plugin)
+* [GitFlow](#gitflow)
+<!-- tocstop -->
       <!-- install -->
       <!-- usage -->
-
 ```sh-session
 $ npm install -g @gaelmotte/gmotte-sfdx-plugin
 $ sfdx COMMAND
 running command...
 $ sfdx (--version)
-@gaelmotte/gmotte-sfdx-plugin/0.4.0-alpha.2 linux-x64 node-v19.0.0
+@gaelmotte/gmotte-sfdx-plugin/0.4.0-alpha.3 linux-x64 node-v19.0.0
 $ sfdx --help [COMMAND]
 USAGE
   $ sfdx COMMAND
 ...
 ```
-
 <!-- usagestop -->
 <!-- commands -->
+* [`sfdx gmotte:org:switch [-g] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`](#sfdx-gmotteorgswitch--g---json---loglevel-tracedebuginfowarnerrorfataltracedebuginfowarnerrorfatal)
 
-# Installation
-
-```
-sfdx plugins:install @gaelmotte/gmotte-sfdx-plugin
-```
-
-- [`sfdx org:switch [-g] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`](#sfdx-orgswitch--g---json---loglevel-tracedebuginfowarnerrorfataltracedebuginfowarnerrorfatal)
-
-## `sfdx org:switch [-g] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`
+## `sfdx gmotte:org:switch [-g] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`
 
 Interractively switch default username and default devhub
 
 ```
 USAGE
-  $ sfdx org:switch [-g] [--json] [--loglevel
+  $ sfdx gmotte:org:switch [-g] [--json] [--loglevel
     trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 FLAGS
@@ -65,8 +55,7 @@ EXAMPLES
   $ sfdx gmotte:org:switch -g
 ```
 
-_See code: [src/commands/org/switch.ts](https://github.com/gaelmotte/gmotte-sfdx-plugin/blob/v0.4.0-alpha.2/src/commands/org/switch.ts)_
-
+_See code: [src/commands/gmotte/org/switch.ts](https://github.com/gaelmotte/gmotte-sfdx-plugin/blob/v0.4.0-alpha.3/src/commands/gmotte/org/switch.ts)_
 <!-- commandsstop -->
 <!-- debugging-your-plugin -->
 
