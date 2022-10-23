@@ -111,7 +111,7 @@ jobs:
           command: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > ~/cli/.npmrc
       - run:
           name: Publish package
-          command: npm publish --access public
+          command: npx is-prerelease && npm publish --access public --tag alpha || npm publish --access public
 
 workflows:
   version: 2
