@@ -15,8 +15,8 @@ Personal sfdx plugin to ease my everyday life
 * [Debugging your plugin](#debugging-your-plugin)
 * [GitFlow](#gitflow)
 <!-- tocstop -->
-  <!-- install -->
-  <!-- usage -->
+    <!-- install -->
+    <!-- usage -->
 ```sh-session
 $ npm install -g @gaelmotte/gmotte-sfdx-plugin
 $ sfdx COMMAND
@@ -91,3 +91,5 @@ $ NODE_OPTIONS=--inspect-brk bin/run hello:org -u myOrg@example.com
    Congrats, you are debugging!
 
 # GitFlow
+
+document me
