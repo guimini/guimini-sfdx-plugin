@@ -19,7 +19,7 @@ $ npm install -g @gaelmotte/gmotte-sfdx-plugin
 $ sfdx COMMAND
 running command...
 $ sfdx (--version)
-@gaelmotte/gmotte-sfdx-plugin/0.4.0-alpha.3 linux-x64 node-v19.0.0
+@gaelmotte/gmotte-sfdx-plugin/0.4.0 linux-x64 node-v19.0.0
 $ sfdx --help [COMMAND]
 USAGE
   $ sfdx COMMAND
@@ -55,7 +55,7 @@ EXAMPLES
   $ sfdx gmotte:org:switch -g
 ```
 
-_See code: [src/commands/gmotte/org/switch.ts](https://github.com/gaelmotte/gmotte-sfdx-plugin/blob/v0.4.0-alpha.3/src/commands/gmotte/org/switch.ts)_
+_See code: [src/commands/gmotte/org/switch.ts](https://github.com/gaelmotte/gmotte-sfdx-plugin/blob/v0.4.0/src/commands/gmotte/org/switch.ts)_
 <!-- commandsstop -->
 <!-- debugging-your-plugin -->
 
