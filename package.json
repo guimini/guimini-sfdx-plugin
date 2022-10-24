@@ -56,7 +56,11 @@
     "commands": "./lib/commands",
     "bin": "sfdx",
     "topics": {
-      "org": {
+      "gmotte":{
+          "description": "Personal sfdx plugin to ease my everyday life",
+          "hidden":true
+      },
+      "gmotte:org": {
         "description": "Commands to manage your orgs"
       }
     }
@@ -72,7 +76,7 @@
     "bumpversion": "is-prerelease && npm version minor -m \"v%s[ci skip]\"|| npm version patch -m \"v%s[ci skip]\"",
     "bumpprerelease": "is-prerelease &&  npm version prerelease --preid alpha -m \"v%s[ci skip]\"|| npm version preminor --preid alpha -m \"v%s[ci skip]\"",
     "posttest": "eslint src/**/*.ts test/**/*.ts",
-    "version": "rm -rf lib && tsc -b && oclif manifest && oclif readme && git add README.md && git add -A -f lib",
+    "version": "rm -rf lib && tsc -b && oclif manifest && oclif readme --multi && git add README.md && git add -A -f lib",
     "postversion": "git push --set-upstream origin $CIRCLE_BRANCH && git push --tags && rm -rf lib && rm -f oclif.manifest.json"
   }
 }
