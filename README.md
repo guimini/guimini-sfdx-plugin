@@ -9,23 +9,29 @@ Personal sfdx plugin to ease my everyday life
 
 <!-- toc -->
 * [@gaelmotte/gmotte-sfdx-plugin](#gaelmottegmotte-sfdx-plugin)
+* [Installation](#installation)
+* [Commands](#commands)
 * [Debugging your plugin](#debugging-your-plugin)
-* [GitFlow](#gitflow)
 <!-- tocstop -->
-      <!-- install -->
-      <!-- usage -->
-```sh-session
-$ npm install -g @gaelmotte/gmotte-sfdx-plugin
-$ sfdx COMMAND
-running command...
-$ sfdx (--version)
-@gaelmotte/gmotte-sfdx-plugin/0.5.0-alpha.0 linux-x64 node-v19.0.0
-$ sfdx --help [COMMAND]
-USAGE
-  $ sfdx COMMAND
-...
+
+# Installation
+
+## Recommanded : use direct installer or brew formula to benefit from auto-autpdates
+
 ```
-<!-- usagestop -->
+brew install --cask sfdx
+sfdx plugins:install @gaelmotte/gmotte-sfdx-plugin
+```
+
+## Early adopter ? use @alpha tag at your own risks :)
+
+```
+brew install --cask sfdx
+sfdx plugins:install @gaelmotte/gmotte-sfdx-plugin@alpha
+```
+
+# Commands
+
 <!-- commands -->
 * [`sfdx gmotte:org:switch [-g] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`](#sfdx-gmotteorgswitch--g---json---loglevel-tracedebuginfowarnerrorfataltracedebuginfowarnerrorfatal)
 
@@ -57,7 +63,6 @@ EXAMPLES
 
 _See code: [src/commands/gmotte/org/switch.ts](https://github.com/gaelmotte/gmotte-sfdx-plugin/blob/v0.5.0-alpha.0/src/commands/gmotte/org/switch.ts)_
 <!-- commandsstop -->
-<!-- debugging-your-plugin -->
 
 # Debugging your plugin
 
@@ -86,7 +91,3 @@ $ NODE_OPTIONS=--inspect-brk bin/run gmotte:org:switch
 6. Hit the green play button at the top middle of VS Code (this play button will be to the right of the play button that you clicked in step #5).
    <br><img src=".images/vscodeScreenshot.png" width="480" height="278"><br>
    Congrats, you are debugging!
-
-# GitFlow
-
-document me
