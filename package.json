@@ -1,7 +1,7 @@
 {
   "name": "@gaelmotte/gmotte-sfdx-plugin",
   "description": "Personal sfdx plugin to ease my everyday life",
-  "version": "0.5.0-alpha.0",
+  "version": "0.5.0-alpha.1",
   "author": "Gael Motte",
   "bugs": {
     "url": "https://github.com/gaelmotte/gmotte-sfdx-plugin/issues"
@@ -56,9 +56,9 @@
     "commands": "./lib/commands",
     "bin": "sfdx",
     "topics": {
-      "gmotte":{
-          "description": "Personal sfdx plugin to ease my everyday life",
-          "hidden":true
+      "gmotte": {
+        "description": "Personal sfdx plugin to ease my everyday life",
+        "hidden": true
       },
       "gmotte:org": {
         "description": "Commands to manage your orgs"

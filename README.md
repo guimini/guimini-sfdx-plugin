@@ -34,9 +34,6 @@ sfdx plugins:install @gaelmotte/gmotte-sfdx-plugin@alpha
 # Commands
 
 <!-- commands -->
-# Command Topics
-
-* [`sfdx gmotte:org`](docs/gmotte/org.md) - Commands to manage your orgs
 
 <!-- commandsstop -->
 
