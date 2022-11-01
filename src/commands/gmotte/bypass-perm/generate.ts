@@ -1,7 +1,10 @@
 import * as os from 'os';
+import * as path from 'path';
+import { promises as fs } from 'fs';
 import * as inquirer from 'inquirer';
 import * as inquirerCheckboxPlusPrompt from 'inquirer-checkbox-plus-prompt';
 import * as fuzzy from 'fuzzy';
+import * as xml2js from 'xml2js';
 
 import { ComponentSet, ComponentSetBuilder, RetrieveResult } from '@salesforce/source-deploy-retrieve';
 import { Duration } from '@salesforce/kit';
@@ -83,6 +86,7 @@ export default class Generate extends SfdxCommand {
     await this.identifyBypassCustomPermissionsToCreate();
 
     // generate them
+    await this.generateCustomPermissions();
     // Generate manifest
     return {};
   }
@@ -187,5 +191,31 @@ export default class Generate extends SfdxCommand {
       },
       {},
     );
+  }
+
+  protected async generateCustomPermissions(): Promise<void> {
+    // TODO prompt for output dir
+    // default : default packagedir, if it exists, ./main/default
+    const builder = new xml2js.Builder();
+    const promises: Promise<void>[] = [];
+    for (const [sobject, automations] of Object.entries(this.bypassCustomPermissionsToGenerate)) {
+      automations.forEach((automation) => {
+        const label = Generate.getBypassCustomPermissionName(sobject, automation);
+        const customPermission: AnyJson = {
+          CustomPermission: {
+            $: { xmlns: 'http://soap.sforce.com/2006/04/metadata' },
+            isLicensed: false,
+            label,
+          },
+        };
+        const xmlFile = builder.buildObject(customPermission);
+        const outputFilePath = path.join(
+          process.cwd(),
+          /*this.flags.outputdir, */ `${label}.customPermission-meta.xml`,
+        );
+        promises.push(fs.writeFile(outputFilePath, xmlFile, 'utf8'));
+      });
+    }
+    await Promise.all(promises);
   }
 }
