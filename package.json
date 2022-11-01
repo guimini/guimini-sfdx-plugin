@@ -1,7 +1,7 @@
 {
   "name": "@gaelmotte/gmotte-sfdx-plugin",
   "description": "Personal sfdx plugin to ease my everyday life",
-  "version": "0.5.0-alpha.1",
+  "version": "0.5.0-alpha.2",
   "author": "Gael Motte",
   "bugs": {
     "url": "https://github.com/gaelmotte/gmotte-sfdx-plugin/issues"
