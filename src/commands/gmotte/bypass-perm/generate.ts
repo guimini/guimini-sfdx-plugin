@@ -1,5 +1,7 @@
 import * as os from 'os';
-// import * as inquirer from 'inquirer';
+import * as inquirer from 'inquirer';
+import * as inquirerCheckboxPlusPrompt from 'inquirer-checkbox-plus-prompt';
+import * as fuzzy from 'fuzzy';
 
 import { ComponentSet, ComponentSetBuilder, RetrieveResult } from '@salesforce/source-deploy-retrieve';
 import { Duration } from '@salesforce/kit';
@@ -53,16 +55,19 @@ export default class Generate extends SfdxCommand {
   protected retrieveResult: RetrieveResult;
   protected allDescriptions: DescribeGlobalResult;
 
+  protected automationsByPassToGenerate: string[];
+  protected sobjectsByPassToGenerate: string[];
+
   public async run(): Promise<AnyJson> {
     // Retrieve Custom Permissions metadata
     await this.retrieveCustomPermissions();
 
     // get list of sobjects
     await this.retrieveSObjectDescriptions();
-    this.ux.logJson(this.allDescriptions);
 
-    // Prompt to select what automation deserve a Bypass custom permission
-    // Prompt to select what objects deserve a ByPAss custom permission
+    // Prompt to select what automation deserve a BypPass custom permission
+    // Prompt to select what objects deserve a ByPass custom permission
+    await this.promptAutomationsAndObjects();
     // generate them
     // Generate manifest
     return {};
@@ -101,5 +106,50 @@ export default class Generate extends SfdxCommand {
   protected async retrieveSObjectDescriptions(): Promise<void> {
     const conn: Connection = this.org.getConnection();
     this.allDescriptions = await conn.describeGlobal();
+  }
+
+  protected async promptAutomationsAndObjects(): Promise<void> {
+    inquirer.registerPrompt('checkbox-plus', inquirerCheckboxPlusPrompt);
+
+    const questions: inquirer.DistinctQuestion[] = [];
+    questions.push({
+      type: 'checkbox',
+      name: 'automations',
+      message: 'What automations need a ByPass Custom Permission?',
+      default: ['VR', 'Flow', 'Trigger'],
+      choices: ['VR', 'Flow', 'Trigger'],
+    });
+    questions.push({
+      //@ts-ignore No typing provided by plugin
+      type: 'checkbox-plus',
+      name: 'sobjects',
+      message: 'What objects need a ByPass Custom Permission?',
+      pageSize: 10,
+      highlight: true,
+      searchable: true,
+      source: (_, input: string = '') => {
+        return new Promise((resolve) => {
+          const sObjectsLabelsAndApiNames = this.allDescriptions.sobjects.map(
+            (sobject) => `${sobject.label}(${sobject.name})`,
+          );
+          // pre and post options allow the manipulation of shell display color
+          const fuzzyResult = fuzzy.filter(input, sObjectsLabelsAndApiNames, { pre: '\x1b[92m', post: '\x1b[39m' });
+          const data = fuzzyResult.map(function (element) {
+            return {
+              name: element.string,
+              value: element.original.replace(/^.*\((.*)\)$/g, '$1'),
+              short: element.original,
+            };
+          });
+
+          resolve(data);
+        });
+      },
+    });
+
+    const { automations, sobjects } = await inquirer.prompt(questions);
+
+    this.sobjectsByPassToGenerate = sobjects;
+    this.automationsByPassToGenerate = automations;
   }
 }
