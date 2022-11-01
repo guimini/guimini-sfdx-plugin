@@ -16,7 +16,8 @@
     "inquirer": "8.2.4",
     "inquirer-checkbox-plus-prompt": "^1.0.1",
     "jsforce": "^2.0.0-beta.19",
-    "tslib": "^2"
+    "tslib": "^2",
+    "xml2js": "^0.4.23"
   },
   "devDependencies": {
     "@oclif/test": "^2",
