@@ -61,7 +61,8 @@ export default class Generate extends SfdxCommand {
     return this.project.getUniquePackageDirectories().map((pDir) => pDir.fullPath);
   }
 
-  protected componentSet?: ComponentSet;
+  protected retrievedComponentSet?: ComponentSet;
+  protected generatedComponentSet?: ComponentSet;
   protected retrieveResult: RetrieveResult;
   protected allDescriptions: DescribeGlobalResult;
 
@@ -82,19 +83,20 @@ export default class Generate extends SfdxCommand {
     await this.promptAutomationsAndObjects();
 
     // Identify which BypassPermissions need to be created
-
     await this.identifyBypassCustomPermissionsToCreate();
 
     // generate them
     await this.generateCustomPermissions();
+
     // Generate manifest
+    await this.generateManifest();
     return {};
   }
 
   // https://github.com/salesforcecli/plugin-source/blob/main/src/commands/force/source/retrieve.ts
   protected async retrieveCustomPermissions(): Promise<void> {
     this.ux.startSpinner(spinnerMessages.getMessage('retrieve.componentSetBuild'));
-    this.componentSet = await ComponentSetBuilder.build({
+    this.retrievedComponentSet = await ComponentSetBuilder.build({
       apiversion: this.getFlag<string>('apiversion'),
       sourceapiversion: await this.getSourceApiVersion(),
       metadata: {
@@ -105,10 +107,10 @@ export default class Generate extends SfdxCommand {
 
     this.ux.setSpinnerStatus(
       spinnerMessages.getMessage('retrieve.sendingRequest', [
-        this.componentSet.sourceApiVersion || this.componentSet.apiVersion,
+        this.retrievedComponentSet.sourceApiVersion || this.retrievedComponentSet.apiVersion,
       ]),
     );
-    const mdapiRetrieve = await this.componentSet.retrieve({
+    const mdapiRetrieve = await this.retrievedComponentSet.retrieve({
       usernameOrConnection: this.org.getUsername(),
       merge: true,
       output: this.project.getDefaultPackage().fullPath,
@@ -179,7 +181,7 @@ export default class Generate extends SfdxCommand {
       (acc: bypassCustomPermissionsByObjects, sobject) => {
         const automationsForSObject = allowedAutomations.filter((automation) => {
           if (
-            this.componentSet.find(
+            this.retrievedComponentSet.find(
               (component) => component.fullName === Generate.getBypassCustomPermissionName(sobject, automation),
             )
           )
@@ -198,6 +200,16 @@ export default class Generate extends SfdxCommand {
     // default : default packagedir, if it exists, ./main/default
     const builder = new xml2js.Builder();
     const promises: Promise<void>[] = [];
+
+    this.generatedComponentSet = await ComponentSetBuilder.build({
+      apiversion: this.getFlag<string>('apiversion'),
+      sourceapiversion: await this.getSourceApiVersion(),
+      metadata: {
+        metadataEntries: [],
+        directoryPaths: [process.cwd()],
+      },
+    });
+
     for (const [sobject, automations] of Object.entries(this.bypassCustomPermissionsToGenerate)) {
       automations.forEach((automation) => {
         const label = Generate.getBypassCustomPermissionName(sobject, automation);
@@ -214,8 +226,16 @@ export default class Generate extends SfdxCommand {
           /*this.flags.outputdir, */ `${label}.customPermission-meta.xml`,
         );
         promises.push(fs.writeFile(outputFilePath, xmlFile, 'utf8'));
+        this.generatedComponentSet.add({
+          fullName: label,
+          type: 'CustomPermission',
+        });
       });
     }
     await Promise.all(promises);
+  }
+
+  protected async generateManifest(): Promise<void> {
+    await fs.writeFile(path.join(process.cwd(), 'package.xml'), await this.generatedComponentSet.getPackageXml());
   }
 }
