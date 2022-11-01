@@ -4,8 +4,9 @@ import * as os from 'os';
 import { ComponentSet, ComponentSetBuilder, RetrieveResult } from '@salesforce/source-deploy-retrieve';
 import { Duration } from '@salesforce/kit';
 import { SfdxCommand, flags } from '@salesforce/command';
-import { Messages } from '@salesforce/core';
+import { Connection, Messages } from '@salesforce/core';
 import { AnyJson, Optional, getString, get } from '@salesforce/ts-types';
+import { DescribeGlobalResult } from 'jsforce';
 
 import { packageName } from '../../../config';
 // Initialize Messages with the current plugin directory
@@ -50,11 +51,25 @@ export default class Generate extends SfdxCommand {
 
   protected componentSet?: ComponentSet;
   protected retrieveResult: RetrieveResult;
+  protected allDescriptions: DescribeGlobalResult;
 
   public async run(): Promise<AnyJson> {
-    // Obtain a valid org from cli default or flag
-    // https://github.com/salesforcecli/plugin-source/blob/main/src/commands/force/source/retrieve.ts
+    // Retrieve Custom Permissions metadata
+    await this.retrieveCustomPermissions();
 
+    // get list of sobjects
+    await this.retrieveSObjectDescriptions();
+    this.ux.logJson(this.allDescriptions);
+
+    // Prompt to select what automation deserve a Bypass custom permission
+    // Prompt to select what objects deserve a ByPAss custom permission
+    // generate them
+    // Generate manifest
+    return {};
+  }
+
+  // https://github.com/salesforcecli/plugin-source/blob/main/src/commands/force/source/retrieve.ts
+  protected async retrieveCustomPermissions(): Promise<void> {
     this.ux.startSpinner(spinnerMessages.getMessage('retrieve.componentSetBuild'));
     this.componentSet = await ComponentSetBuilder.build({
       apiversion: this.getFlag<string>('apiversion'),
@@ -80,13 +95,11 @@ export default class Generate extends SfdxCommand {
     this.retrieveResult = await mdapiRetrieve.pollStatus({ timeout: Duration.minutes(2) });
 
     this.ux.stopSpinner();
+  }
 
-    return {};
-    // Retrieve Custom Permissions metadata
-    // get list of sobjects
-    // Prompt to select what automation deserve a Bypass custom permission
-    // Prompt to select what objects deserve a ByPAss custom permission
-    // generate them
-    // Generate manifest
+  // https://github.com/salesforcecli/plugin-schema/blob/main/src/commands/force/schema/sobject/list.ts
+  protected async retrieveSObjectDescriptions(): Promise<void> {
+    const conn: Connection = this.org.getConnection();
+    this.allDescriptions = await conn.describeGlobal();
   }
 }
