@@ -13,6 +13,7 @@
     "@salesforce/plugin-source": "^2.1.3",
     "@salesforce/source-deploy-retrieve": "^7.5.0",
     "inquirer": "8.2.4",
+    "jsforce": "^2.0.0-beta.19",
     "tslib": "^2"
   },
   "devDependencies": {
