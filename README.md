@@ -34,7 +34,6 @@ sfdx plugins:install @gaelmotte/gmotte-sfdx-plugin@alpha
 # Commands
 
 <!-- commands -->
-# Command Topics
 
 <!-- commandsstop -->
 
