@@ -19,11 +19,18 @@ Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages(packageName, 'generate');
 const spinnerMessages = Messages.loadMessages(packageName, 'spinner');
 
+const allowedAutomations = ['VR', 'Flow', 'Trigger'] as const;
+type allowedAutomationsType = typeof allowedAutomations[number];
+type bypassCustomPermissionsByObjects = { [sobjectName: string]: Array<allowedAutomationsType> };
+
 export default class Generate extends SfdxCommand {
   public static readonly description = messages.getMessage('commandDescription');
   public static readonly examples = messages.getMessage('examples').split(os.EOL);
   public static readonly requiresProject = true;
   public static readonly requiresUsername = true;
+
+  public static getBypassCustomPermissionName = (sobject: string, automation: allowedAutomationsType) =>
+    `ByPass_${sobject}_${automation}`;
 
   protected static flagsConfig = {
     apiversion: flags.builtin({
@@ -55,8 +62,10 @@ export default class Generate extends SfdxCommand {
   protected retrieveResult: RetrieveResult;
   protected allDescriptions: DescribeGlobalResult;
 
-  protected automationsByPassToGenerate: string[];
-  protected sobjectsByPassToGenerate: string[];
+  protected selectedAutomations: string[];
+  protected selectedSObjects: string[];
+
+  protected bypassCustomPermissionsToGenerate: bypassCustomPermissionsByObjects;
 
   public async run(): Promise<AnyJson> {
     // Retrieve Custom Permissions metadata
@@ -68,6 +77,11 @@ export default class Generate extends SfdxCommand {
     // Prompt to select what automation deserve a BypPass custom permission
     // Prompt to select what objects deserve a ByPass custom permission
     await this.promptAutomationsAndObjects();
+
+    // Identify which BypassPermissions need to be created
+
+    await this.identifyBypassCustomPermissionsToCreate();
+
     // generate them
     // Generate manifest
     return {};
@@ -149,7 +163,29 @@ export default class Generate extends SfdxCommand {
 
     const { automations, sobjects } = await inquirer.prompt(questions);
 
-    this.sobjectsByPassToGenerate = sobjects;
-    this.automationsByPassToGenerate = automations;
+    this.selectedSObjects = sobjects;
+    this.selectedAutomations = automations;
+  }
+
+  protected async identifyBypassCustomPermissionsToCreate(): Promise<void> {
+    // for each selectedObject
+    // for each selectedAUtomation
+    // search in  custom permission  already exists in componentSet
+    this.bypassCustomPermissionsToGenerate = this.selectedSObjects.reduce<bypassCustomPermissionsByObjects>(
+      (acc: bypassCustomPermissionsByObjects, sobject) => {
+        const automationsForSObject = allowedAutomations.filter((automation) => {
+          if (
+            this.componentSet.find(
+              (component) => component.fullName === Generate.getBypassCustomPermissionName(sobject, automation),
+            )
+          )
+            return false;
+          return true;
+        });
+        if (automationsForSObject.length > 0) acc[sobject] = automationsForSObject;
+        return acc;
+      },
+      {},
+    );
   }
 }
