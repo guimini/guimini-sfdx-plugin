@@ -11,6 +11,7 @@ Personal sfdx plugin to ease my everyday life
 * [@gaelmotte/gmotte-sfdx-plugin](#gaelmottegmotte-sfdx-plugin)
 * [Installation](#installation)
 * [Commands](#commands)
+* [Command Topics](#command-topics)
 * [Debugging your plugin](#debugging-your-plugin)
 <!-- tocstop -->
 
@@ -33,35 +34,10 @@ sfdx plugins:install @gaelmotte/gmotte-sfdx-plugin@alpha
 # Commands
 
 <!-- commands -->
-* [`sfdx gmotte:org:switch [-g] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`](#sfdx-gmotteorgswitch--g---json---loglevel-tracedebuginfowarnerrorfataltracedebuginfowarnerrorfatal)
+# Command Topics
 
-## `sfdx gmotte:org:switch [-g] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`
+* [`sfdx gmotte:org`](docs/gmotte/org.md) - Commands to manage your orgs
 
-Interractively switch default username and default devhub
-
-```
-USAGE
-  $ sfdx gmotte:org:switch [-g] [--json] [--loglevel
-    trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
-
-FLAGS
-  -g, --global                                                                      Set the configuration variables
-                                                                                    globally, so they can be used from
-                                                                                    any Salesforce DX project.
-  --json                                                                            format output as json
-  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for
-                                                                                    this command invocation
-
-DESCRIPTION
-  Interractively switch default username and default devhub
-
-EXAMPLES
-  $ sfdx gmotte:org:switch
-
-  $ sfdx gmotte:org:switch -g
-```
-
-_See code: [src/commands/gmotte/org/switch.ts](https://github.com/gaelmotte/gmotte-sfdx-plugin/blob/v0.5.0-alpha.0/src/commands/gmotte/org/switch.ts)_
 <!-- commandsstop -->
 
 # Debugging your plugin
