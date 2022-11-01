@@ -1,0 +1,8 @@
+{
+  "commandDescription": "Interractively generate custom permissions to bypass VR, Flows and Triggers",
+  "errorNoOrgResults": "No results found for the org.",
+  "examples": ["sfdx gmotte:bypass-perm:generate"],
+  "flags": {
+    "manifest": "file path for manifest (package.xml) to be generated"
+  }
+}
