@@ -8,5 +8,10 @@
   "prompt":{
     "whatAutomations": "What automations need a ByPass Custom Permission?",
     "whatSobjects": "What objects need a ByPass Custom Permission?"
+  },
+  "outputs":{
+    "push":"Some ByPass custom permissions neet to be pushed.\nRun `sfdx force:source:push`",
+    "deploy":"Some ByPass custom permissions neet to be deployed.\nRun `sfdx force:source:deploy -x %s`",
+    "upToDate": "Everything is up to date!"
   }
 }

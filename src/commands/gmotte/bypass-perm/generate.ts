@@ -93,9 +93,8 @@ export default class Generate extends SfdxCommand {
   protected selectedSObjects: string[];
 
   protected bypassCustomPermissionsToGenerate: BypassCustomPermissionsByObjects;
-  protected generatedComponentSet?: ComponentSet;
 
-  public async run(): Promise<AnyJson> {
+  public async run(): Promise<void> {
     // Retrieve Custom Permissions metadata
     await this.retrieveCustomPermissions();
 
@@ -114,7 +113,8 @@ export default class Generate extends SfdxCommand {
 
     // Generate manifest
     await this.generateManifest();
-    return {};
+
+    await this.outputResult();
   }
 
   // https://github.com/salesforcecli/plugin-source/blob/main/src/commands/force/source/retrieve.ts
@@ -241,7 +241,7 @@ export default class Generate extends SfdxCommand {
     await Promise.all(promises);
   }
 
-  protected async generateManifest(): Promise<void> {
+  protected async getCustomPermissionsToDeploy(): Promise<ComponentSet> {
     const allCustomPermissionsComponentSet = await ComponentSetBuilder.build({
       apiversion: this.getFlag<string>('apiversion'),
       sourceapiversion: await this.getSourceApiVersion(),
@@ -251,17 +251,39 @@ export default class Generate extends SfdxCommand {
       },
     });
 
-    const customPermissionsToAddToPackage = allCustomPermissionsComponentSet.filter((customPermission) => {
+    return allCustomPermissionsComponentSet.filter((customPermission) => {
       const isByPassCustomPermission = isByPassCustomPermissionName(customPermission.fullName);
       const alreadyExists = !!this.retrieveResult.components.find(
         (retrievedCustomPermission) => retrievedCustomPermission.fullName === customPermission.fullName,
       );
       return isByPassCustomPermission && !alreadyExists;
     });
+  }
 
-    await fs.writeFile(
-      path.join(await this.getDefaultManifestDir(), 'package.xml'),
-      await customPermissionsToAddToPackage.getPackageXml(),
-    );
+  protected async generateManifest(): Promise<void> {
+    const customPermissionsToAddToPackage = await this.getCustomPermissionsToDeploy();
+    if (customPermissionsToAddToPackage.size > 0) {
+      await fs.writeFile(
+        path.join(await this.getDefaultManifestDir(), 'package.xml'),
+        await customPermissionsToAddToPackage.getPackageXml(),
+      );
+    } else {
+      await fs.rm(path.join(await this.getDefaultManifestDir(), 'package.xml'));
+    }
+  }
+
+  protected async outputResult() {
+    // suggest to deploy or push depending of org.isScratch
+    if ((await this.getCustomPermissionsToDeploy()).size > 0) {
+      if (this.org.isScratch()) {
+        this.ux.log(messages.getMessage('outputs.push'));
+      } else {
+        this.ux.log(
+          messages.getMessage('outputs.deploy', [path.join(await this.getDefaultManifestDir(), 'package.xml')]),
+        );
+      }
+    } else {
+      this.ux.log(messages.getMessage('outputs.upToDate'));
+    }
   }
 }
