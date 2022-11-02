@@ -13,6 +13,9 @@ import { Connection, Messages } from '@salesforce/core';
 import { AnyJson, Optional, getString, get } from '@salesforce/ts-types';
 import { DescribeGlobalResult } from 'jsforce';
 
+import { allowedAutomations, BypassCustomPermissionsByObjects } from '../../../types';
+import { getByPassCustomPermissionName, isByPassCustomPermissionName } from '../../../util';
+
 import { packageName } from '../../../config';
 // Initialize Messages with the current plugin directory
 Messages.importMessagesDirectory(__dirname);
@@ -22,18 +25,11 @@ Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages(packageName, 'generate');
 const spinnerMessages = Messages.loadMessages(packageName, 'spinner');
 
-const allowedAutomations = ['VR', 'Flow', 'Trigger'] as const;
-type allowedAutomationsType = typeof allowedAutomations[number];
-type bypassCustomPermissionsByObjects = { [sobjectName: string]: Array<allowedAutomationsType> };
-
 export default class Generate extends SfdxCommand {
   public static readonly description = messages.getMessage('commandDescription');
   public static readonly examples = messages.getMessage('examples').split(os.EOL);
   public static readonly requiresProject = true;
   public static readonly requiresUsername = true;
-
-  public static getBypassCustomPermissionName = (sobject: string, automation: allowedAutomationsType) =>
-    `ByPass_${sobject}_${automation}`;
 
   protected static flagsConfig = {
     apiversion: flags.builtin({
@@ -61,15 +57,43 @@ export default class Generate extends SfdxCommand {
     return this.project.getUniquePackageDirectories().map((pDir) => pDir.fullPath);
   }
 
+  protected async getDefaultCustomMetadataDir(): Promise<string> {
+    const subPath = ['main', 'default', 'customPermissions'];
+    while (subPath.length > 0) {
+      const pathToCheck = path.join(this.project.getDefaultPackage().fullPath, ...subPath);
+      try {
+        await fs.access(pathToCheck);
+        return pathToCheck;
+      } catch (_) {
+        subPath.pop();
+      }
+    }
+    return this.project.getDefaultPackage().fullPath;
+  }
+
+  protected async getDefaultManifestDir(): Promise<string> {
+    const subPath = ['manifest'];
+    while (subPath.length > 0) {
+      const pathToCheck = path.join(this.project.getDefaultPackage().fullPath, ...subPath);
+      try {
+        await fs.access(pathToCheck);
+        return pathToCheck;
+      } catch (_) {
+        subPath.pop();
+      }
+    }
+    return this.project.getDefaultPackage().fullPath;
+  }
+
   protected retrievedComponentSet?: ComponentSet;
-  protected generatedComponentSet?: ComponentSet;
   protected retrieveResult: RetrieveResult;
   protected allDescriptions: DescribeGlobalResult;
 
   protected selectedAutomations: string[];
   protected selectedSObjects: string[];
 
-  protected bypassCustomPermissionsToGenerate: bypassCustomPermissionsByObjects;
+  protected bypassCustomPermissionsToGenerate: BypassCustomPermissionsByObjects;
+  protected generatedComponentSet?: ComponentSet;
 
   public async run(): Promise<AnyJson> {
     // Retrieve Custom Permissions metadata
@@ -101,7 +125,7 @@ export default class Generate extends SfdxCommand {
       sourceapiversion: await this.getSourceApiVersion(),
       metadata: {
         metadataEntries: ['CustomPermission'],
-        directoryPaths: this.getPackageDirs(),
+        directoryPaths: [], // this.getPackageDirs(),
       },
     });
 
@@ -135,15 +159,15 @@ export default class Generate extends SfdxCommand {
     questions.push({
       type: 'checkbox',
       name: 'automations',
-      message: 'What automations need a ByPass Custom Permission?',
-      default: ['VR', 'Flow', 'Trigger'],
-      choices: ['VR', 'Flow', 'Trigger'],
+      message: messages.getMessage('prompt.whatAutomations'),
+      default: allowedAutomations,
+      choices: allowedAutomations,
     });
     questions.push({
       //@ts-ignore No typing provided by plugin
       type: 'checkbox-plus',
       name: 'sobjects',
-      message: 'What objects need a ByPass Custom Permission?',
+      message: messages.getMessage('prompt.whatSobjects'),
       pageSize: 10,
       highlight: true,
       searchable: true,
@@ -176,16 +200,12 @@ export default class Generate extends SfdxCommand {
   protected async identifyBypassCustomPermissionsToCreate(): Promise<void> {
     // for each selectedObject
     // for each selectedAUtomation
-    // search in  custom permission  already exists in componentSet
-    this.bypassCustomPermissionsToGenerate = this.selectedSObjects.reduce<bypassCustomPermissionsByObjects>(
-      (acc: bypassCustomPermissionsByObjects, sobject) => {
+    // search in  custom permission already exists in componentSet
+    this.bypassCustomPermissionsToGenerate = this.selectedSObjects.reduce<BypassCustomPermissionsByObjects>(
+      (acc: BypassCustomPermissionsByObjects, sobject) => {
         const automationsForSObject = allowedAutomations.filter((automation) => {
-          if (
-            this.retrievedComponentSet.find(
-              (component) => component.fullName === Generate.getBypassCustomPermissionName(sobject, automation),
-            )
-          )
-            return false;
+          const bpName = getByPassCustomPermissionName(sobject, automation);
+          if (this.retrievedComponentSet.find((component) => component.fullName === bpName)) return false;
           return true;
         });
         if (automationsForSObject.length > 0) acc[sobject] = automationsForSObject;
@@ -201,18 +221,11 @@ export default class Generate extends SfdxCommand {
     const builder = new xml2js.Builder();
     const promises: Promise<void>[] = [];
 
-    this.generatedComponentSet = await ComponentSetBuilder.build({
-      apiversion: this.getFlag<string>('apiversion'),
-      sourceapiversion: await this.getSourceApiVersion(),
-      metadata: {
-        metadataEntries: [],
-        directoryPaths: [process.cwd()],
-      },
-    });
+    const outputdir = await this.getDefaultCustomMetadataDir();
 
     for (const [sobject, automations] of Object.entries(this.bypassCustomPermissionsToGenerate)) {
       automations.forEach((automation) => {
-        const label = Generate.getBypassCustomPermissionName(sobject, automation);
+        const label = getByPassCustomPermissionName(sobject, automation);
         const customPermission: AnyJson = {
           CustomPermission: {
             $: { xmlns: 'http://soap.sforce.com/2006/04/metadata' },
@@ -221,21 +234,34 @@ export default class Generate extends SfdxCommand {
           },
         };
         const xmlFile = builder.buildObject(customPermission);
-        const outputFilePath = path.join(
-          process.cwd(),
-          /*this.flags.outputdir, */ `${label}.customPermission-meta.xml`,
-        );
+        const outputFilePath = path.join(outputdir, `${label}.customPermission-meta.xml`);
         promises.push(fs.writeFile(outputFilePath, xmlFile, 'utf8'));
-        this.generatedComponentSet.add({
-          fullName: label,
-          type: 'CustomPermission',
-        });
       });
     }
     await Promise.all(promises);
   }
 
   protected async generateManifest(): Promise<void> {
-    await fs.writeFile(path.join(process.cwd(), 'package.xml'), await this.generatedComponentSet.getPackageXml());
+    const allCustomPermissionsComponentSet = await ComponentSetBuilder.build({
+      apiversion: this.getFlag<string>('apiversion'),
+      sourceapiversion: await this.getSourceApiVersion(),
+      metadata: {
+        metadataEntries: ['CustomPermission'],
+        directoryPaths: [this.project.getDefaultPackage().fullPath],
+      },
+    });
+
+    const customPermissionsToAddToPackage = allCustomPermissionsComponentSet.filter((customPermission) => {
+      const isByPassCustomPermission = isByPassCustomPermissionName(customPermission.fullName);
+      const alreadyExists = !!this.retrieveResult.components.find(
+        (retrievedCustomPermission) => retrievedCustomPermission.fullName === customPermission.fullName,
+      );
+      return isByPassCustomPermission && !alreadyExists;
+    });
+
+    await fs.writeFile(
+      path.join(await this.getDefaultManifestDir(), 'package.xml'),
+      await customPermissionsToAddToPackage.getPackageXml(),
+    );
   }
 }
