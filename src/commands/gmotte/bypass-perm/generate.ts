@@ -17,6 +17,8 @@ import { allowedAutomations, BypassCustomPermissionsByObjects } from '../../../t
 import { getByPassCustomPermissionName, isByPassCustomPermissionName } from '../../../util';
 
 import { packageName } from '../../../config';
+const packageXmlName = 'NewByPassCustomPermissions.xml';
+
 // Initialize Messages with the current plugin directory
 Messages.importMessagesDirectory(__dirname);
 
@@ -35,10 +37,6 @@ export default class Generate extends SfdxCommand {
     apiversion: flags.builtin({
       // @ts-ignore force char override for backward compat
       char: 'a',
-    }),
-    manifest: flags.filepath({
-      char: 'x',
-      description: messages.getMessage('flags.manifest'),
     }),
   };
 
@@ -264,11 +262,11 @@ export default class Generate extends SfdxCommand {
     const customPermissionsToAddToPackage = await this.getCustomPermissionsToDeploy();
     if (customPermissionsToAddToPackage.size > 0) {
       await fs.writeFile(
-        path.join(await this.getDefaultManifestDir(), 'package.xml'),
+        path.join(await this.getDefaultManifestDir(), packageXmlName),
         await customPermissionsToAddToPackage.getPackageXml(),
       );
     } else {
-      await fs.rm(path.join(await this.getDefaultManifestDir(), 'package.xml'));
+      await fs.rm(path.join(await this.getDefaultManifestDir(), packageXmlName));
     }
   }
 
@@ -279,7 +277,7 @@ export default class Generate extends SfdxCommand {
         this.ux.log(messages.getMessage('outputs.push'));
       } else {
         this.ux.log(
-          messages.getMessage('outputs.deploy', [path.join(await this.getDefaultManifestDir(), 'package.xml')]),
+          messages.getMessage('outputs.deploy', [path.join(await this.getDefaultManifestDir(), packageXmlName)]),
         );
       }
     } else {
