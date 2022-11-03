@@ -61,7 +61,7 @@ EXAMPLES
   $ sfdx gmotte:bypass-perm:generate
 ```
 
-_See code: [src/commands/gmotte/bypass-perm/generate.ts](https://github.com/gaelmotte/gmotte-sfdx-plugin/blob/v0.5.0-alpha.2/src/commands/gmotte/bypass-perm/generate.ts)_
+_See code: [src/commands/gmotte/bypass-perm/generate.ts](https://github.com/gaelmotte/gmotte-sfdx-plugin/blob/v0.6.0-alpha.0/src/commands/gmotte/bypass-perm/generate.ts)_
 
 ## `sfdx gmotte:org:switch [-g] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`
 
@@ -89,7 +89,7 @@ EXAMPLES
   $ sfdx gmotte:org:switch -g
 ```
 
-_See code: [src/commands/gmotte/org/switch.ts](https://github.com/gaelmotte/gmotte-sfdx-plugin/blob/v0.5.0-alpha.2/src/commands/gmotte/org/switch.ts)_
+_See code: [src/commands/gmotte/org/switch.ts](https://github.com/gaelmotte/gmotte-sfdx-plugin/blob/v0.6.0-alpha.0/src/commands/gmotte/org/switch.ts)_
 <!-- commandsstop -->
 
 # Debugging your plugin
