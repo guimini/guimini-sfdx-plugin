@@ -273,7 +273,7 @@ export default class Generate extends SfdxCommand {
   protected async outputResult() {
     // suggest to deploy or push depending of org.isScratch
     if ((await this.getCustomPermissionsToDeploy()).size > 0) {
-      if (this.org.tracksSource()) {
+      if (await this.org.tracksSource()) {
         this.ux.log(messages.getMessage('outputs.push'));
       } else {
         this.ux.log(
