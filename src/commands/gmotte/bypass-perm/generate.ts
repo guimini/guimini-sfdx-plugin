@@ -13,7 +13,7 @@ import { Connection, Messages } from '@salesforce/core';
 import { AnyJson, Optional, getString, get } from '@salesforce/ts-types';
 import { DescribeGlobalResult } from 'jsforce';
 
-import { allowedAutomations, BypassCustomPermissionsByObjects } from '../../../types';
+import { allowedAutomations, AllowedAutomationsType, BypassCustomPermissionsByObjects } from '../../../types';
 import { getByPassCustomPermissionName, isByPassCustomPermissionName } from '../../../util';
 
 import { packageName } from '../../../config';
@@ -87,7 +87,7 @@ export default class Generate extends SfdxCommand {
   protected retrieveResult: RetrieveResult;
   protected allDescriptions: DescribeGlobalResult;
 
-  protected selectedAutomations: string[];
+  protected selectedAutomations: AllowedAutomationsType[];
   protected selectedSObjects: string[];
 
   protected bypassCustomPermissionsToGenerate: BypassCustomPermissionsByObjects;
@@ -201,7 +201,7 @@ export default class Generate extends SfdxCommand {
     // search in  custom permission already exists in componentSet
     this.bypassCustomPermissionsToGenerate = this.selectedSObjects.reduce<BypassCustomPermissionsByObjects>(
       (acc: BypassCustomPermissionsByObjects, sobject) => {
-        const automationsForSObject = allowedAutomations.filter((automation) => {
+        const automationsForSObject = this.selectedAutomations.filter((automation) => {
           const bpName = getByPassCustomPermissionName(sobject, automation);
           if (this.retrievedComponentSet.find((component) => component.fullName === bpName)) return false;
           return true;
@@ -266,7 +266,7 @@ export default class Generate extends SfdxCommand {
         await customPermissionsToAddToPackage.getPackageXml(),
       );
     } else {
-      await fs.rm(path.join(await this.getDefaultManifestDir(), packageXmlName));
+      await fs.rm(path.join(await this.getDefaultManifestDir(), packageXmlName), { force: true });
     }
   }
 
