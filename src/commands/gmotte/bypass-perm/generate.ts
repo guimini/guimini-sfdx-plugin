@@ -6,8 +6,7 @@ import * as inquirerCheckboxPlusPrompt from 'inquirer-checkbox-plus-prompt';
 import * as fuzzy from 'fuzzy';
 import * as xml2js from 'xml2js';
 
-import { ComponentSet, ComponentSetBuilder, RetrieveResult } from '@salesforce/source-deploy-retrieve';
-import { Duration } from '@salesforce/kit';
+import { ComponentSet, ComponentSetBuilder } from '@salesforce/source-deploy-retrieve';
 import { SfdxCommand, flags } from '@salesforce/command';
 import { Connection, Messages } from '@salesforce/core';
 import { AnyJson, Optional, getString, get } from '@salesforce/ts-types';
@@ -25,7 +24,6 @@ Messages.importMessagesDirectory(__dirname);
 // Load the specific messages for this file. Messages from @salesforce/command, @salesforce/core,
 // or any library that is using the messages framework can also be loaded this way.
 const messages = Messages.loadMessages(packageName, 'generate');
-const spinnerMessages = Messages.loadMessages(packageName, 'spinner');
 
 export default class Generate extends SfdxCommand {
   public static readonly description = messages.getMessage('commandDescription');
@@ -76,8 +74,7 @@ export default class Generate extends SfdxCommand {
     return this.getDefaultDir(['manifest']);
   }
 
-  protected retrievedComponentSet?: ComponentSet;
-  protected retrieveResult: RetrieveResult;
+  protected existingByPassCustomPermissions: string[];
   protected allDescriptions: DescribeGlobalResult;
 
   protected selectedAutomations: AllowedAutomationsType[];
@@ -86,8 +83,8 @@ export default class Generate extends SfdxCommand {
   protected bypassCustomPermissionsToGenerate: BypassCustomPermissionsByObjects;
 
   public async run(): Promise<void> {
-    // Retrieve Custom Permissions metadata
-    await this.retrieveCustomPermissions();
+    // get the list of existing Bypass Permissions
+    await this.getExistingByPassPermissions();
 
     // get list of sobjects
     await this.retrieveSObjectDescriptions();
@@ -108,33 +105,11 @@ export default class Generate extends SfdxCommand {
     await this.outputResult();
   }
 
-  // https://github.com/salesforcecli/plugin-source/blob/main/src/commands/force/source/retrieve.ts
-  protected async retrieveCustomPermissions(): Promise<void> {
-    this.ux.startSpinner(spinnerMessages.getMessage('retrieve.componentSetBuild'));
-    this.retrievedComponentSet = await ComponentSetBuilder.build({
-      apiversion: this.getFlag<string>('apiversion'),
-      sourceapiversion: await this.getSourceApiVersion(),
-      metadata: {
-        metadataEntries: ['CustomPermission'],
-        directoryPaths: [], // this.getPackageDirs(),
-      },
-    });
-
-    this.ux.setSpinnerStatus(
-      spinnerMessages.getMessage('retrieve.sendingRequest', [
-        this.retrievedComponentSet.sourceApiVersion || this.retrievedComponentSet.apiVersion,
-      ]),
-    );
-    const mdapiRetrieve = await this.retrievedComponentSet.retrieve({
-      usernameOrConnection: this.org.getUsername(),
-      merge: true,
-      output: this.project.getDefaultPackage().fullPath,
-    });
-
-    this.ux.setSpinnerStatus(spinnerMessages.getMessage('retrieve.polling'));
-    this.retrieveResult = await mdapiRetrieve.pollStatus({ timeout: Duration.minutes(2) });
-
-    this.ux.stopSpinner();
+  protected async getExistingByPassPermissions(): Promise<void> {
+    const existingCustomPermissions = await this.org.getConnection().metadata.list({ type: 'CustomPermission' });
+    this.existingByPassCustomPermissions = existingCustomPermissions
+      .map((fileProperty) => fileProperty.fullName)
+      .filter(isByPassCustomPermissionName);
   }
 
   // https://github.com/salesforcecli/plugin-schema/blob/main/src/commands/force/schema/sobject/list.ts
@@ -191,13 +166,12 @@ export default class Generate extends SfdxCommand {
   protected async identifyBypassCustomPermissionsToCreate(): Promise<void> {
     // for each selectedObject
     // for each selectedAUtomation
-    // search in  custom permission already exists in componentSet
+    // search if bypass custom perm already exists
     this.bypassCustomPermissionsToGenerate = this.selectedSObjects.reduce<BypassCustomPermissionsByObjects>(
       (acc: BypassCustomPermissionsByObjects, sobject) => {
         const automationsForSObject = this.selectedAutomations.filter((automation) => {
           const bpName = getByPassCustomPermissionName(sobject, automation);
-          if (this.retrievedComponentSet.find((component) => component.fullName === bpName)) return false;
-          return true;
+          return !this.existingByPassCustomPermissions.includes(bpName);
         });
         if (automationsForSObject.length > 0) acc[sobject] = automationsForSObject;
         return acc;
@@ -242,9 +216,7 @@ export default class Generate extends SfdxCommand {
 
     return allCustomPermissionsComponentSet.filter((customPermission) => {
       const isByPassCustomPermission = isByPassCustomPermissionName(customPermission.fullName);
-      const alreadyExists = !!this.retrieveResult.components.find(
-        (retrievedCustomPermission) => retrievedCustomPermission.fullName === customPermission.fullName,
-      );
+      const alreadyExists = this.existingByPassCustomPermissions.includes(customPermission.fullName);
       return isByPassCustomPermission && !alreadyExists;
     });
   }
