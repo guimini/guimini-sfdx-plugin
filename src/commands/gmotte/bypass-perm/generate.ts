@@ -55,8 +55,7 @@ export default class Generate extends SfdxCommand {
     return this.project.getUniquePackageDirectories().map((pDir) => pDir.fullPath);
   }
 
-  protected async getDefaultCustomMetadataDir(): Promise<string> {
-    const subPath = ['main', 'default', 'customPermissions'];
+  protected async getDefaultDir(subPath: string[]): Promise<string> {
     while (subPath.length > 0) {
       const pathToCheck = path.join(this.project.getDefaultPackage().fullPath, ...subPath);
       try {
@@ -69,18 +68,12 @@ export default class Generate extends SfdxCommand {
     return this.project.getDefaultPackage().fullPath;
   }
 
+  protected async getDefaultCustomPermissionDir(): Promise<string> {
+    return this.getDefaultDir(['main', 'default', 'customPermissions']);
+  }
+
   protected async getDefaultManifestDir(): Promise<string> {
-    const subPath = ['manifest'];
-    while (subPath.length > 0) {
-      const pathToCheck = path.join(this.project.getDefaultPackage().fullPath, ...subPath);
-      try {
-        await fs.access(pathToCheck);
-        return pathToCheck;
-      } catch (_) {
-        subPath.pop();
-      }
-    }
-    return this.project.getDefaultPackage().fullPath;
+    return this.getDefaultDir(['manifest']);
   }
 
   protected retrievedComponentSet?: ComponentSet;
@@ -214,12 +207,10 @@ export default class Generate extends SfdxCommand {
   }
 
   protected async generateCustomPermissions(): Promise<void> {
-    // TODO prompt for output dir
-    // default : default packagedir, if it exists, ./main/default
     const builder = new xml2js.Builder();
     const promises: Promise<void>[] = [];
 
-    const outputdir = await this.getDefaultCustomMetadataDir();
+    const outputdir = await this.getDefaultCustomPermissionDir();
 
     for (const [sobject, automations] of Object.entries(this.bypassCustomPermissionsToGenerate)) {
       automations.forEach((automation) => {
