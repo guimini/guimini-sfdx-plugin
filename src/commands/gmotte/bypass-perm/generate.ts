@@ -281,7 +281,7 @@ export default class Generate extends SfdxCommand {
           permissionSet.customPermissions.push({ enabled: true, name: customPermissionName }),
         );
 
-      const outputFilePath = path.join(outputdir, `${getByPassPermissionSetName(sobject)}.permissionSet-meta.xml`);
+      const outputFilePath = path.join(outputdir, `${getByPassPermissionSetName(sobject)}.permissionset-meta.xml`);
       return fs.writeFile(outputFilePath, this.buildXml(permissionSet, 'PermissionSet'), 'utf8');
     });
 
@@ -305,12 +305,31 @@ export default class Generate extends SfdxCommand {
     });
   }
 
+  protected async getPermissionSetsToDeploy(): Promise<ComponentSet> {
+    const allPermissionSetsComponentSet = await ComponentSetBuilder.build({
+      apiversion: this.getFlag<string>('apiversion'),
+      sourceapiversion: await this.getSourceApiVersion(),
+      metadata: {
+        metadataEntries: ['PermissionSet'],
+        directoryPaths: [this.project.getDefaultPackage().fullPath],
+      },
+    });
+
+    return allPermissionSetsComponentSet.filter((permissionSet) => {
+      const isByPassPermissionSet = isByPassPermissionSetName(permissionSet.fullName);
+      const alreadyExists = this.existingByPassPermissionSets.includes(permissionSet.fullName);
+      return isByPassPermissionSet && !alreadyExists;
+    });
+  }
+
   protected async generateManifest(): Promise<void> {
     const customPermissionsToAddToPackage = await this.getCustomPermissionsToDeploy();
-    if (customPermissionsToAddToPackage.size > 0) {
+    const permissionSetsToAddToPackage = await this.getPermissionSetsToDeploy();
+    const componentsToDeploy = new ComponentSet([...customPermissionsToAddToPackage, ...permissionSetsToAddToPackage]);
+    if (componentsToDeploy.size > 0) {
       await fs.writeFile(
         path.join(await this.getDefaultManifestDir(), packageXmlName),
-        await customPermissionsToAddToPackage.getPackageXml(),
+        await componentsToDeploy.getPackageXml(),
       );
     } else {
       await fs.rm(path.join(await this.getDefaultManifestDir(), packageXmlName), { force: true });
