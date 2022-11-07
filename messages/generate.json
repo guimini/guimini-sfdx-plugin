@@ -10,7 +10,7 @@
     "whatSobjects": "What objects need a ByPass Custom Permission?"
   },
   "outputs":{
-    "push":"Some ByPass custom permissions neet to be pushed.\nRun `sfdx force:source:push`",
+    "push":"Some ByPass custom permissions neet to be pushed.\nRun `sfdx force:source:push`\nor `sfdx force:source:deploy -x %s`",
     "deploy":"Some ByPass custom permissions neet to be deployed.\nRun `sfdx force:source:deploy -x %s`",
     "upToDate": "Everything is up to date!"
   }
