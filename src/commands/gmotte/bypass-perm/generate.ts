@@ -6,7 +6,7 @@ import * as inquirerCheckboxPlusPrompt from 'inquirer-checkbox-plus-prompt';
 import * as fuzzy from 'fuzzy';
 import * as xml2js from 'xml2js';
 
-import { ComponentSet, ComponentSetBuilder } from '@salesforce/source-deploy-retrieve';
+import { ComponentSet, ComponentSetBuilder, registry } from '@salesforce/source-deploy-retrieve';
 import { SfdxCommand, flags } from '@salesforce/command';
 import { Connection, Messages } from '@salesforce/core';
 import { Optional, getString, get } from '@salesforce/ts-types';
@@ -73,11 +73,11 @@ export default class Generate extends SfdxCommand {
   }
 
   protected async getDefaultCustomPermissionDir(): Promise<string> {
-    return this.getDefaultDir(['main', 'default', 'customPermissions']);
+    return this.getDefaultDir(['main', 'default', registry.types.custompermission.directoryName]);
   }
 
   protected async getDefaultPermissionSetDir(): Promise<string> {
-    return this.getDefaultDir(['main', 'default', 'permissionSets']);
+    return this.getDefaultDir(['main', 'default', registry.types.permissionset.directoryName]);
   }
 
   protected async getDefaultManifestDir(): Promise<string> {
@@ -230,7 +230,7 @@ export default class Generate extends SfdxCommand {
           requiredPermission: [],
         };
         const xmlFile = this.buildXml(customPermission, 'CustomPermission');
-        const outputFilePath = path.join(outputdir, `${label}.customPermission-meta.xml`);
+        const outputFilePath = path.join(outputdir, `${label}.${registry.types.custompermission.suffix}-meta.xml`);
         promises.push(fs.writeFile(outputFilePath, xmlFile, 'utf8'));
       });
     }
@@ -281,7 +281,10 @@ export default class Generate extends SfdxCommand {
           permissionSet.customPermissions.push({ enabled: true, name: customPermissionName }),
         );
 
-      const outputFilePath = path.join(outputdir, `${getByPassPermissionSetName(sobject)}.permissionset-meta.xml`);
+      const outputFilePath = path.join(
+        outputdir,
+        `${getByPassPermissionSetName(sobject)}.${registry.types.permissionset.suffix}-meta.xml`,
+      );
       return fs.writeFile(outputFilePath, this.buildXml(permissionSet, 'PermissionSet'), 'utf8');
     });
 
