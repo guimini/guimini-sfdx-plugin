@@ -9,13 +9,19 @@ import * as xml2js from 'xml2js';
 import { ComponentSet, ComponentSetBuilder } from '@salesforce/source-deploy-retrieve';
 import { SfdxCommand, flags } from '@salesforce/command';
 import { Connection, Messages } from '@salesforce/core';
-import { AnyJson, Optional, getString, get } from '@salesforce/ts-types';
+import { Optional, getString, get } from '@salesforce/ts-types';
 import { DescribeGlobalResult } from 'jsforce';
 
 import { allowedAutomations, AllowedAutomationsType, BypassCustomPermissionsByObjects } from '../../../types';
-import { getByPassCustomPermissionName, isByPassCustomPermissionName } from '../../../util';
+import {
+  getByPassCustomPermissionName,
+  getByPassPermissionSetName,
+  isByPassCustomPermissionName,
+  isByPassPermissionSetName,
+} from '../../../util';
 
 import { packageName } from '../../../config';
+import { ApiSchemaTypes, CustomPermission, Metadata, PermissionSet } from 'jsforce/lib/api/metadata';
 const packageXmlName = 'NewByPassCustomPermissions.xml';
 
 // Initialize Messages with the current plugin directory
@@ -70,21 +76,30 @@ export default class Generate extends SfdxCommand {
     return this.getDefaultDir(['main', 'default', 'customPermissions']);
   }
 
+  protected async getDefaultPermissionSetDir(): Promise<string> {
+    return this.getDefaultDir(['main', 'default', 'permissionSets']);
+  }
+
   protected async getDefaultManifestDir(): Promise<string> {
     return this.getDefaultDir(['manifest']);
   }
 
   protected existingByPassCustomPermissions: string[];
+  protected existingByPassPermissionSets: string[];
   protected allDescriptions: DescribeGlobalResult;
 
   protected selectedAutomations: AllowedAutomationsType[];
   protected selectedSObjects: string[];
 
   protected bypassCustomPermissionsToGenerate: BypassCustomPermissionsByObjects;
+  protected bypassPermissionSetsToCreateOrUpdate: string[];
+
+  private builder = new xml2js.Builder();
 
   public async run(): Promise<void> {
     // get the list of existing Bypass Permissions
     await this.getExistingByPassPermissions();
+    await this.getExistingByPassPermissionSets();
 
     // get list of sobjects
     await this.retrieveSObjectDescriptions();
@@ -95,9 +110,13 @@ export default class Generate extends SfdxCommand {
 
     // Identify which BypassPermissions need to be created
     await this.identifyBypassCustomPermissionsToCreate();
+    await this.identifyByPassPermissionSetsToCreateOrUpdate();
 
     // generate them
-    await this.generateCustomPermissions();
+    await this.generateByPassCustomPermissions();
+
+    // identify which ByPassPermissionSet need to be created or updated
+    await this.generateByPassPermissionSets();
 
     // Generate manifest
     await this.generateManifest();
@@ -110,6 +129,13 @@ export default class Generate extends SfdxCommand {
     this.existingByPassCustomPermissions = existingCustomPermissions
       .map((fileProperty) => fileProperty.fullName)
       .filter(isByPassCustomPermissionName);
+  }
+
+  protected async getExistingByPassPermissionSets(): Promise<void> {
+    const existingPermissionSets = await this.org.getConnection().metadata.list({ type: 'PermissionSet' });
+    this.existingByPassPermissionSets = existingPermissionSets
+      .map((fileProperty) => fileProperty.fullName)
+      .filter(isByPassPermissionSetName);
   }
 
   // https://github.com/salesforcecli/plugin-schema/blob/main/src/commands/force/schema/sobject/list.ts
@@ -180,8 +206,18 @@ export default class Generate extends SfdxCommand {
     );
   }
 
-  protected async generateCustomPermissions(): Promise<void> {
-    const builder = new xml2js.Builder();
+  protected async identifyByPassPermissionSetsToCreateOrUpdate(): Promise<void> {
+    this.bypassPermissionSetsToCreateOrUpdate = this.selectedSObjects;
+  }
+
+  private buildXml<T extends Metadata>(metadata: T, metadataType: keyof ApiSchemaTypes) {
+    const metadataContent = {
+      [metadataType]: { ...metadata, $: { xmlns: 'http://soap.sforce.com/2006/04/metadata' } },
+    };
+    return this.builder.buildObject(metadataContent);
+  }
+
+  protected async generateByPassCustomPermissions(): Promise<void> {
     const promises: Promise<void>[] = [];
 
     const outputdir = await this.getDefaultCustomPermissionDir();
@@ -189,18 +225,66 @@ export default class Generate extends SfdxCommand {
     for (const [sobject, automations] of Object.entries(this.bypassCustomPermissionsToGenerate)) {
       automations.forEach((automation) => {
         const label = getByPassCustomPermissionName(sobject, automation);
-        const customPermission: AnyJson = {
-          CustomPermission: {
-            $: { xmlns: 'http://soap.sforce.com/2006/04/metadata' },
-            isLicensed: false,
-            label,
-          },
+        const customPermission: CustomPermission = {
+          label,
+          requiredPermission: [],
         };
-        const xmlFile = builder.buildObject(customPermission);
+        const xmlFile = this.buildXml(customPermission, 'CustomPermission');
         const outputFilePath = path.join(outputdir, `${label}.customPermission-meta.xml`);
         promises.push(fs.writeFile(outputFilePath, xmlFile, 'utf8'));
       });
     }
+    await Promise.all(promises);
+  }
+
+  protected async generateByPassPermissionSets(): Promise<void> {
+    // find out if it already exists
+    // if so, read it, upate it, write it
+    // if not, create it
+
+    const outputdir = await this.getDefaultPermissionSetDir();
+    const customPermissionsToAddToPackage = await this.getCustomPermissionsToDeploy();
+    const existingByPassPermissionSetsMetadatas = await this.org
+      .getConnection()
+      .metadata.read('PermissionSet', this.existingByPassPermissionSets);
+
+    const promises: Promise<void>[] = this.bypassPermissionSetsToCreateOrUpdate.map((sobject) => {
+      const permissionSet: PermissionSet = existingByPassPermissionSetsMetadatas.find(
+        (ps) => ps.fullName === getByPassPermissionSetName(sobject),
+      ) ?? {
+        fullName: getByPassPermissionSetName(sobject),
+        customPermissions: [],
+        hasActivationRequired: false,
+        label: getByPassPermissionSetName(sobject),
+        applicationVisibilities: [],
+        classAccesses: [],
+        customMetadataTypeAccesses: [],
+        externalDataSourceAccesses: [],
+        fieldPermissions: [],
+        flowAccesses: [],
+        objectPermissions: [],
+        pageAccesses: [],
+        recordTypeVisibilities: [],
+        tabSettings: [],
+        userPermissions: [],
+      };
+
+      customPermissionsToAddToPackage
+        .filter((customPermission) => customPermission.fullName.includes(sobject))
+        .toArray()
+        .forEach((customPermission) =>
+          permissionSet.customPermissions.push({ enabled: true, name: customPermission.fullName }),
+        );
+      this.existingByPassCustomPermissions
+        .filter((customPermissionName) => customPermissionName.includes(sobject))
+        .forEach((customPermissionName) =>
+          permissionSet.customPermissions.push({ enabled: true, name: customPermissionName }),
+        );
+
+      const outputFilePath = path.join(outputdir, `${getByPassPermissionSetName(sobject)}.permissionSet-meta.xml`);
+      return fs.writeFile(outputFilePath, this.buildXml(permissionSet, 'PermissionSet'), 'utf8');
+    });
+
     await Promise.all(promises);
   }
 
