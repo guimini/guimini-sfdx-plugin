@@ -39,7 +39,7 @@ export default class Switch extends SfdxCommand {
 
     const questions: inquirer.DistinctQuestion[] = [];
 
-    const getAliasOrUsername = (org: OrgAuthorization) => org.aliases[0] ?? org.username;
+    const getAliasOrUsername = (org?: OrgAuthorization) => org?.aliases[0] ?? org?.username;
     if (devHubAuthInfos.length > 0) {
       questions.push({
         type: 'list',
