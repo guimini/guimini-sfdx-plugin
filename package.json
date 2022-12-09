@@ -1,10 +1,10 @@
 {
-  "name": "@gaelmotte/gmotte-sfdx-plugin",
-  "description": "Personal sfdx plugin to ease my everyday life",
+  "name": "@guimini/guimini-sfdx-plugin",
+  "description": "Collection of commands to ease anyone's life",
   "version": "0.6.0-alpha.2",
   "author": "Gael Motte",
   "bugs": {
-    "url": "https://github.com/gaelmotte/gmotte-sfdx-plugin/issues"
+    "url": "https://github.com/guimini/guimini-sfdx-plugin/issues"
   },
   "dependencies": {
     "@oclif/core": "^1.20.2",
@@ -54,7 +54,7 @@
     "/messages",
     "/npm-shrinkwrap.json"
   ],
-  "homepage": "https://github.com/gaelmotte/gmotte-sfdx-plugin",
+  "homepage": "https://github.com/guimini/guimini-sfdx-plugin",
   "keywords": [
     "sfdx-plugin"
   ],
@@ -63,18 +63,18 @@
     "commands": "./lib/commands",
     "bin": "sfdx",
     "topics": {
-      "gmotte": {
-        "description": "Personal sfdx plugin to ease my everyday life",
+      "guimini": {
+        "description": "Collection of commands to ease anyone's life",
         "hidden": true
       },
-      "gmotte:org": {
+      "guimini:org": {
         "description": "Commands to manage your orgs"
       }
     }
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gaelmotte/gmotte-sfdx-plugin.git"
+    "url": "git+https://github.com/guimini/guimini-sfdx-plugin.git"
   },
   "scripts": {
     "build": "rm -rf lib && tsc -p .",
