@@ -61,7 +61,7 @@ EXAMPLES
   $ sfdx guimini:bypass-perm:generate
 ```
 
-_See code: [src/commands/guimini/bypass-perm/generate.ts](https://github.com/guimini/guimini-sfdx-plugin/blob/v0.6.0-alpha.1/src/commands/guimini/bypass-perm/generate.ts)_
+_See code: [src/commands/guimini/bypass-perm/generate.ts](https://github.com/guimini/guimini-sfdx-plugin/blob/v0.6.0-alpha.2/src/commands/guimini/bypass-perm/generate.ts)_
 
 ## `sfdx guimini:org:switch [-g] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`
 
@@ -89,7 +89,7 @@ EXAMPLES
   $ sfdx guimini:org:switch -g
 ```
 
-_See code: [src/commands/guimini/org/switch.ts](https://github.com/guimini/guimini-sfdx-plugin/blob/v0.6.0-alpha.1/src/commands/guimini/org/switch.ts)_
+_See code: [src/commands/guimini/org/switch.ts](https://github.com/guimini/guimini-sfdx-plugin/blob/v0.6.0-alpha.2/src/commands/guimini/org/switch.ts)_
 <!-- commandsstop -->
 
 # Debugging your plugin
