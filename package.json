@@ -83,7 +83,7 @@
     "bumpversion": "is-prerelease && npm version minor -m \"v%s[ci skip]\"|| npm version patch -m \"v%s[ci skip]\"",
     "bumpprerelease": "is-prerelease &&  npm version prerelease --preid alpha -m \"v%s[ci skip]\"|| npm version preminor --preid alpha -m \"v%s[ci skip]\"",
     "posttest": "eslint src/**/*.ts test/**/*.ts",
-    "preversion": "rm -rf lib && tsc -b && oclif manifest && oclif readme && git add README.md && git add -A -f lib && diff --staged --quiet || git commit -m \"build artefacts [ci skip]\" ",
+    "preversion": "rm -rf lib && tsc -b && oclif manifest && oclif readme && git add README.md && git add -A -f lib && git diff --staged --quiet || git commit -m \"build artefacts [ci skip]\" ",
     "postversion": "git push --set-upstream origin $CIRCLE_BRANCH && git push --tags && rm -rf lib && rm -f oclif.manifest.json"
   }
 }
