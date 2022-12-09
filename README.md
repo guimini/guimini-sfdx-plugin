@@ -1,14 +1,14 @@
-# @gaelmotte/gmotte-sfdx-plugin
+# @guimini/guimini-sfdx-plugin
 
-[![Version](https://img.shields.io/npm/v/@gaelmotte/gmotte-sfdx-plugin.svg)](https://npmjs.org/package/@gaelmotte/gmotte-sfdx-plugin)
-[![CircleCI](https://circleci.com/gh/gaelmotte/gmotte-sfdx-plugin/tree/main.svg?style=shield)](https://circleci.com/gh/gaelmotte/gmotte-sfdx-plugin/tree/main)
-[![Downloads/week](https://img.shields.io/npm/dw/@gaelmotte/gmotte-sfdx-plugin.svg)](https://npmjs.org/package/@gaelmotte/gmotte-sfdx-plugin)
-[![License](https://img.shields.io/npm/l/@gaelmotte/gmotte-sfdx-plugin.svg)](https://github.com/gaelmotte/gmotte-sfdx-plugin/blob/main/package.json)
+[![Version](https://img.shields.io/npm/v/@guimini/guimini-sfdx-plugin.svg)](https://npmjs.org/package/@guimini/guimini-sfdx-plugin)
+[![CircleCI](https://circleci.com/gh/guimini/guimini-sfdx-plugin/tree/main.svg?style=shield)](https://circleci.com/gh/guimini/guimini-sfdx-plugin/tree/main)
+[![Downloads/week](https://img.shields.io/npm/dw/@guimini/guimini-sfdx-plugin.svg)](https://npmjs.org/package/@guimini/guimini-sfdx-plugin)
+[![License](https://img.shields.io/npm/l/@guimini/guimini-sfdx-plugin.svg)](https://github.com/guimini/guimini-sfdx-plugin/blob/main/package.json)
 
 Personal sfdx plugin to ease my everyday life
 
 <!-- toc -->
-* [@gaelmotte/gmotte-sfdx-plugin](#gaelmottegmotte-sfdx-plugin)
+* [@guimini/guimini-sfdx-plugin](#guiminiguimini-sfdx-plugin)
 * [Installation](#installation)
 * [Commands](#commands)
 * [Debugging your plugin](#debugging-your-plugin)
@@ -20,29 +20,29 @@ Personal sfdx plugin to ease my everyday life
 
 ```
 brew install --cask sfdx
-sfdx plugins:install @gaelmotte/gmotte-sfdx-plugin
+sfdx plugins:install @guimini/guimini-sfdx-plugin
 ```
 
 ## Early adopter ? use @alpha tag at your own risks :)
 
 ```
 brew install --cask sfdx
-sfdx plugins:install @gaelmotte/gmotte-sfdx-plugin@alpha
+sfdx plugins:install @guimini/guimini-sfdx-plugin@alpha
 ```
 
 # Commands
 
 <!-- commands -->
-* [`sfdx gmotte:bypass-perm:generate [-u <string>] [-a <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`](#sfdx-gmottebypass-permgenerate--u-string--a-string---json---loglevel-tracedebuginfowarnerrorfataltracedebuginfowarnerrorfatal)
-* [`sfdx gmotte:org:switch [-g] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`](#sfdx-gmotteorgswitch--g---json---loglevel-tracedebuginfowarnerrorfataltracedebuginfowarnerrorfatal)
+* [`sfdx guimini:bypass-perm:generate [-u <string>] [-a <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`](#sfdx-guiminibypass-permgenerate--u-string--a-string---json---loglevel-tracedebuginfowarnerrorfataltracedebuginfowarnerrorfatal)
+* [`sfdx guimini:org:switch [-g] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`](#sfdx-guiminiorgswitch--g---json---loglevel-tracedebuginfowarnerrorfataltracedebuginfowarnerrorfatal)
 
-## `sfdx gmotte:bypass-perm:generate [-u <string>] [-a <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`
+## `sfdx guimini:bypass-perm:generate [-u <string>] [-a <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`
 
 Interractively generate custom permissions to bypass VR, Flows and Triggers
 
 ```
 USAGE
-  $ sfdx gmotte:bypass-perm:generate [-u <string>] [-a <string>] [--json] [--loglevel
+  $ sfdx guimini:bypass-perm:generate [-u <string>] [-a <string>] [--json] [--loglevel
     trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 FLAGS
@@ -58,18 +58,18 @@ DESCRIPTION
   Interractively generate custom permissions to bypass VR, Flows and Triggers
 
 EXAMPLES
-  $ sfdx gmotte:bypass-perm:generate
+  $ sfdx guimini:bypass-perm:generate
 ```
 
-_See code: [src/commands/gmotte/bypass-perm/generate.ts](https://github.com/gaelmotte/gmotte-sfdx-plugin/blob/v0.6.0-alpha.1/src/commands/gmotte/bypass-perm/generate.ts)_
+_See code: [src/commands/guimini/bypass-perm/generate.ts](https://github.com/guimini/guimini-sfdx-plugin/blob/v0.6.0-alpha.1/src/commands/guimini/bypass-perm/generate.ts)_
 
-## `sfdx gmotte:org:switch [-g] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`
+## `sfdx guimini:org:switch [-g] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`
 
 Interractively switch default username and default devhub
 
 ```
 USAGE
-  $ sfdx gmotte:org:switch [-g] [--json] [--loglevel
+  $ sfdx guimini:org:switch [-g] [--json] [--loglevel
     trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 FLAGS
@@ -84,32 +84,32 @@ DESCRIPTION
   Interractively switch default username and default devhub
 
 EXAMPLES
-  $ sfdx gmotte:org:switch
+  $ sfdx guimini:org:switch
 
-  $ sfdx gmotte:org:switch -g
+  $ sfdx guimini:org:switch -g
 ```
 
-_See code: [src/commands/gmotte/org/switch.ts](https://github.com/gaelmotte/gmotte-sfdx-plugin/blob/v0.6.0-alpha.1/src/commands/gmotte/org/switch.ts)_
+_See code: [src/commands/guimini/org/switch.ts](https://github.com/guimini/guimini-sfdx-plugin/blob/v0.6.0-alpha.1/src/commands/guimini/org/switch.ts)_
 <!-- commandsstop -->
 
 # Debugging your plugin
 
 We recommend using the Visual Studio Code (VS Code) IDE for your plugin development. Included in the `.vscode` directory of this plugin is a `launch.json` config file, which allows you to attach a debugger to the node process when running your commands.
 
-To debug the `gmotte:org:switch` command:
+To debug the `guimini:org:switch` command:
 
 1. Start the inspector
 
 If you linked your plugin to the sfdx cli, call your command with the `dev-suspend` switch:
 
 ```sh-session
-$ sfdx gmotte:org:switch --dev-suspend
+$ sfdx guimini:org:switch --dev-suspend
 ```
 
 Alternatively, to call your command using the `bin/run` script, set the `NODE_OPTIONS` environment variable to `--inspect-brk` when starting the debugger:
 
 ```sh-session
-$ NODE_OPTIONS=--inspect-brk bin/run gmotte:org:switch
+$ NODE_OPTIONS=--inspect-brk bin/run guimini:org:switch
 ```
 
 2. Set some breakpoints in your command code
