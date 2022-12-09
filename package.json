@@ -1,7 +1,7 @@
 {
   "name": "@guimini/guimini-sfdx-plugin",
   "description": "Collection of commands to ease anyone's life",
-  "version": "0.6.0-alpha.3",
+  "version": "0.6.0",
   "author": "Gael Motte",
   "bugs": {
     "url": "https://github.com/guimini/guimini-sfdx-plugin/issues"
