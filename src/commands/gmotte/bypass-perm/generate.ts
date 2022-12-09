@@ -244,9 +244,10 @@ export default class Generate extends SfdxCommand {
 
     const outputdir = await this.getDefaultPermissionSetDir();
     const customPermissionsToAddToPackage = await this.getCustomPermissionsToDeploy();
-    const existingByPassPermissionSetsMetadatas = await this.org
-      .getConnection()
-      .metadata.read('PermissionSet', this.existingByPassPermissionSets);
+    const existingByPassPermissionSetsMetadatas =
+      this.existingByPassPermissionSets.length === 0
+        ? []
+        : await this.org.getConnection().metadata.read('PermissionSet', this.existingByPassPermissionSets);
 
     const promises: Promise<void>[] = this.bypassPermissionSetsToCreateOrUpdate.map((sobject) => {
       const permissionSet: PermissionSet = existingByPassPermissionSetsMetadatas.find(
