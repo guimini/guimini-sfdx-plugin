@@ -60,7 +60,7 @@ jobs:
           command: git config user.email "gael.motte@gmail.com" && git config user.name "Gael Motte"
       - add_ssh_keys:
           fingerprints:
-            - 'c3:9a:d1:80:21:fb:38:02:1c:65:77:03:51:c2:0e:37'
+            - '2e:05:d7:97:e9:cb:03:5c:77:c7:ff:2c:1a:14:31:e4'
       - run:
           name: Bump Preminor
           command: npm run bumpprerelease
@@ -83,7 +83,7 @@ jobs:
           command: git config user.email "gael.motte@gmail.com" && git config user.name "Gael Motte"
       - add_ssh_keys:
           fingerprints:
-            - 'c3:9a:d1:80:21:fb:38:02:1c:65:77:03:51:c2:0e:37'
+            - '2e:05:d7:97:e9:cb:03:5c:77:c7:ff:2c:1a:14:31:e4'
       - run:
           name: Bump Minor or Patch
           command: npm run bumpversion
@@ -91,7 +91,7 @@ jobs:
           command: |
             D=$(date +'%Y-%m-%d-%H-%M'); 
             B="merge-back-$D";  
-            git checkout -b $B && git push --set-upstream origin $B && gh pr create --title "Merge back $D" -B develop -H main -b "Make sure to keep the most advanced version number when handling the merge over the various conflicted files, if any"
+            git checkout -b $B && git push --set-upstream origin $B && gh pr create --title "Merge back $D" -B develop -H $B -b "Make sure to keep the most advanced version number when handling the merge over the various conflicted files, if any"
           name: Create Pull Request for merge back
 
   publishtonpm:
@@ -111,7 +111,7 @@ jobs:
           command: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > ~/cli/.npmrc
       - run:
           name: Publish package
-          command: npm publish --access public
+          command: npx is-prerelease && npm publish --access public --tag alpha || npm publish --access public
 
 workflows:
   version: 2

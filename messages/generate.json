@@ -1,0 +1,17 @@
+{
+  "commandDescription": "Interractively generate custom permissions to bypass VR, Flows and Triggers",
+  "errorNoOrgResults": "No results found for the org.",
+  "examples": ["sfdx guimini:bypass-perm:generate"],
+  "flags": {
+    "manifest": "file path for manifest (package.xml) to be generated"
+  },
+  "prompt":{
+    "whatAutomations": "What automations need a ByPass Custom Permission?",
+    "whatSobjects": "What objects need a ByPass Custom Permission?"
+  },
+  "outputs":{
+    "push":"Some ByPass custom permissions neet to be pushed.\nRun `sfdx force:source:push`\nor `sfdx force:source:deploy -x %s`",
+    "deploy":"Some ByPass custom permissions neet to be deployed.\nRun `sfdx force:source:deploy -x %s`",
+    "upToDate": "Everything is up to date!"
+  }
+}

@@ -4,7 +4,7 @@ import { SfdxCommand, flags } from '@salesforce/command';
 import { Messages, AuthInfo, Config, OrgConfigProperties, OrgAuthorization } from '@salesforce/core';
 import { AnyJson } from '@salesforce/ts-types';
 
-import { packageName } from 'config';
+import { packageName } from '../../../config';
 // Initialize Messages with the current plugin directory
 Messages.importMessagesDirectory(__dirname);
 
@@ -39,7 +39,7 @@ export default class Switch extends SfdxCommand {
 
     const questions: inquirer.DistinctQuestion[] = [];
 
-    const getAliasOrUsername = (org: OrgAuthorization) => org.aliases[0] ?? org.username;
+    const getAliasOrUsername = (org?: OrgAuthorization) => org?.aliases[0] ?? org?.username;
     if (devHubAuthInfos.length > 0) {
       questions.push({
         type: 'list',
