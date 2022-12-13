@@ -1,0 +1,11 @@
+{
+  "commandDescription": "Interractively select a profile to clear FLS on it",
+  "errorNoOrgResults": "No results found for the org.",
+  "examples": ["sfdx gmotte:profile:clear-fls"],
+  "prompt":{
+
+  },
+  "outputs":{
+
+  }
+}
